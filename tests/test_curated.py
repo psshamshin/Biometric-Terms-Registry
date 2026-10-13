@@ -7,7 +7,7 @@ import yaml
 
 from run import ROOT, run_all
 from src import checks
-from src.curated import CURATED_DIR, fingerprint
+from src.curated import CURATED_DIR, apply_curated, fingerprint
 from src.merge import merge_registries
 
 MERGE_CFG = yaml.safe_load((ROOT / "config/merge.yaml").read_text(encoding="utf-8"))
@@ -76,6 +76,27 @@ def test_llm_stale_on_wrong_or_missing_fingerprint(out_dir, tmp_path):
     res = merge(out_dir, cur)
     assert "llm_stale" in row_by_id(res, "fnmr")["Флаги"] and "llm_stale" in row_by_id(res, "fmr")["Флаги"]
     assert sorted(i for i, _ in res["curated"]["stale"]) == ["fmr", "fnmr"]
+
+
+def test_new_source_wording_makes_llm_stale(out_dir, tmp_path):
+    """Отпечаток считается по заполненным колонкам: пустая колонка нового стандарта его не меняет,
+    а появившаяся в ней формулировка для существующей метрики — меняет, и сборка ставит llm_stale."""
+    empty = SCHEMA["empty"]
+    source_cols = [c["name"] for c in SCHEMA["columns"] if c["filled_by"] == "source"]
+    row = dict(row_by_id(merge(out_dir, None), "fnmr"))
+    col = next(c for c in source_cols if row[c] not in (None, empty))  # колонка стандарта, где формулировка есть
+    without = {**row, col: empty}
+    assert fingerprint({**without, "__новая пустая колонка": empty}, SCHEMA) == fingerprint(without, SCHEMA)
+    assert fingerprint(row, SCHEMA) != fingerprint(without, SCHEMA)
+
+    cur = tmp_path / "curated"
+    write(cur, "fnmr", **{"Короткое определение": "Как часто система не узнаёт своего. Ниже — лучше",
+                          "отпечаток": fingerprint(without, SCHEMA)})
+    stale_rows = [without, {**row_by_id(merge(out_dir, None), "fmr")}]
+    assert apply_curated(stale_rows, SCHEMA, cur)["stale"] == []  # формулировки стандарта не менялись
+    fresh_rows = [dict(row), {**row_by_id(merge(out_dir, None), "fmr")}]
+    report = apply_curated(fresh_rows, SCHEMA, cur)  # новый стандарт добавил формулировку
+    assert [i for i, _ in report["stale"]] == ["fnmr"] and "llm_stale" in fresh_rows[0]["Флаги"]
 
 
 def test_curated_orphan(out_dir, tmp_path):
