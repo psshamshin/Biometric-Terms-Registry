@@ -5,3 +5,7 @@ __pycache__/
 .DS_Store
 .pytest_cache/
 data/out/**/registry.sqlite
+# ключи сервисных аккаунтов — только в секретах GitHub
+service_account*.json
+credentials*.json
+*-key.json
