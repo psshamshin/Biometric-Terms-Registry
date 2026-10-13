@@ -1,22 +1,30 @@
 """Разделы README, которые генерируются из конфигов и схемы при каждом полном прогоне:
-подключённые стандарты, колонки реестра, флаги. Текст между маркерами
+подключённые стандарты (с размером эталона) и флаги. Текст между маркерами
 <!-- AUTO:имя --> и <!-- /AUTO:имя --> заменяется целиком; остальной README не трогается.
 """
 import re
 
-FILLED_BY = {
-    "parser": "парсер",
-    "source": "парсер, дословно из стандарта",
-    "llm": "LLM, через data/curated/",
-    "consumer": "потребитель реестра",
-}
-
+import yaml
 
 def _table(header, rows):
     esc = lambda v: str(v).replace("|", "\\|")
     out = ["| " + " | ".join(header) + " |", "|" + "---|" * len(header)]
     out += ["| " + " | ".join(esc(c) for c in r) + " |" for r in rows]
     return "\n".join(out)
+
+
+def _plural(n, one, few, many):
+    if n % 10 == 1 and n % 100 != 11:
+        return one
+    return few if 2 <= n % 10 <= 4 and not 12 <= n % 100 <= 14 else many
+
+
+def _golden_size(path):
+    """Эталон: статей и заполненных полей (сверяются посимвольно на каждом прогоне)."""
+    if not path.exists():
+        return 0, 0
+    entries = yaml.safe_load(path.read_text(encoding="utf-8")) or []
+    return len(entries), sum(v is not None for e in entries for k, v in e.items() if k != "пункт")
 
 
 def standards_section(merge_cfg, results, std_id, load_yaml, root):
@@ -26,17 +34,12 @@ def standards_section(merge_cfg, results, std_id, load_yaml, root):
         std = load_yaml(root / entry["config"])["standard"]
         res_rows = results[sid]["rows"]
         metrics = sum(r["Тип сущности"] == "метрика" for r in res_rows)
-        rows.append((std["designation"], f"`{sid}`", std["source_column"], len(res_rows), metrics,
+        g_arts, g_fields = _golden_size(root / entry["golden"])
+        rows.append((std["designation"], len(res_rows), metrics,
+                     f"{g_arts} {_plural(g_arts, 'статья', 'статьи', 'статей')} / "
+                     f"{g_fields} {_plural(g_fields, 'поле', 'поля', 'полей')}",
                      str(entry.get("connected", "—"))))
-    return _table(["Обозначение", "std_id", "Колонка", "Статей", "Метрик", "Подключён"], rows)
-
-
-def columns_section(schema, merge_cfg):
-    rows = [(c["n"], c["name"], c["type"], c["constraint"], FILLED_BY.get(c["filled_by"], c["filled_by"]))
-            for c in schema["columns"]]
-    text = _table(["№", "Колонка", "Тип", "Что в ней (ограничение)", "Кто заполняет"], rows)
-    return (text + "\n\nСлужебные колонки реестра стандарта: " + ", ".join(schema["service_columns"]) +
-            ".\nСлужебные колонки общего реестра: " + ", ".join(merge_cfg["service_columns"]) + ".")
+    return _table(["Стандарт", "Статей", "Метрик", "Эталон по сканам", "Подключён"], rows)
 
 
 def flags_section(schema):
@@ -56,6 +59,5 @@ def render(text, sections):
 def sections(merge_cfg, schema, results, std_id, load_yaml, root):
     return {
         "standards": standards_section(merge_cfg, results, std_id, load_yaml, root),
-        "columns": columns_section(schema, merge_cfg),
         "flags": flags_section(schema),
     }
