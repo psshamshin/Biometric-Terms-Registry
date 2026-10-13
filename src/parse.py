@@ -11,6 +11,7 @@
   markers.groups      — пары скобок групп (по умолчанию только круглые), например квадратные для английской группы;
   markers.parameters  — скобка с параметрами «ВЛОИ (N, R, T)» — обозначение, не синоним (→ «Примечания»);
   markers.note_list   — «Примечания» с пунктами «1 …», «2 …» на отдельных строках;
+  markers.example_list — то же для «Примеры»;
   abbreviations       — разбор раздела «Сокращения».
 """
 import re
@@ -170,9 +171,16 @@ def parse_article(article, cfg, log):
     flags = []
 
     note_list = m.get("note_list")
+    example_list = m.get("example_list")
+
+    def list_cfg(line):
+        for cfg_list, target in ((note_list, "notes"), (example_list, "examples")):
+            if cfg_list and re.match(cfg_list["heading"], line):
+                return cfg_list, target
+        return None
 
     def is_list_heading(line):
-        return bool(note_list) and re.match(note_list["heading"], line) is not None
+        return list_cfg(line) is not None
 
     # Блоки «Пример» / «Примечание» / «Примечания» начинаются с новой строки.
     starts = [i for i, l in enumerate(lines)
@@ -183,16 +191,17 @@ def parse_article(article, cfg, log):
     examples, notes = [], []
     for k, i in enumerate(starts):
         end = starts[k + 1] if k + 1 < len(starts) else len(lines)
-        if is_list_heading(lines[i]):  # «Примечания»: каждый пункт «1 …», «2 …» — отдельное примечание
+        if is_list_heading(lines[i]):  # «Примечания» / «Примеры»: каждый пункт «1 …», «2 …» — отдельная запись
+            cfg_list, target = list_cfg(lines[i])
             items = []
             for line in lines[i + 1:end]:
-                if re.match(note_list["item"], line):
-                    items.append([re.sub(note_list["item"], "", line, count=1)])
+                if re.match(cfg_list["item"], line):
+                    items.append([re.sub(cfg_list["item"], "", line, count=1)])
                 elif items:
                     items[-1].append(line)
                 else:
-                    raise ValueError(f"{article['num']}: текст между «Примечания» и первым пунктом: {line!r}")
-            notes += [_join(item) for item in items]
+                    raise ValueError(f"{article['num']}: текст между «{lines[i]}» и первым пунктом: {line!r}")
+            (notes if target == "notes" else examples).extend(_join(item) for item in items)
             continue
         block = _join(lines[i:end])
         if re.match(m["note"], block):
