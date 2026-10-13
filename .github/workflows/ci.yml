@@ -4,6 +4,7 @@ on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch:     # ручной запуск: пересборка, тесты и переопубликация таблицы
 
 jobs:
   test:
@@ -36,3 +37,29 @@ jobs:
             echo "$untracked"
             exit 1
           fi
+
+  # Публикация общего реестра в Google Таблицу: только main (push или ручной запуск) и только если test прошёл.
+  publish:
+    needs: test
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: registry-sheet-publish
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version-file: '.python-version'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Publish registry to Google Sheet
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          REGISTRY_SHEET_ID: ${{ secrets.REGISTRY_SHEET_ID }}
+        run: python -m src.publish_sheet
