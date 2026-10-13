@@ -9,7 +9,7 @@ SCHEMA_PATH = ROOT / "config/registry_schema.yaml"
 MERGE_PATH = ROOT / "config/merge.yaml"
 
 # Правила, которые проверяются не по одному значению, а по строке или таблице целиком.
-ROW_OR_TABLE_RULES = {"unique", "links_exist", "links_cover_sources"}
+ROW_OR_TABLE_RULES = {"unique", "links_exist", "links_cover_sources", "formula_chain"}
 
 
 def _yaml(path):
@@ -187,6 +187,8 @@ def check_table_rules(rows, schema, id_col="Пункт"):
                     if v != empty and v in seen:
                         out.append((row[id_col], col["name"], f"уникален (повтор с {seen[v]})", v))
                     seen.setdefault(v, row[id_col])
+            if rule.get("formula_chain"):
+                out += check_formula_chains(rows, schema, id_col, col["name"])
             if rule.get("links_exist"):
                 known = {row["Аббревиатура en"] for row in rows} | {row["Наименование ru"] for row in rows}
                 known.discard(empty)
@@ -198,6 +200,65 @@ def check_table_rules(rows, schema, id_col="Пункт"):
                         target = item.rsplit(" — ", 1)[0]
                         if target not in known:
                             out.append((row[id_col], col["name"], "запись есть в реестре", item))
+    return out
+
+
+# ---------------------------------------------------------------- формула: цепочка равенств
+
+def _evaluate(expr, terms):
+    """Значение выражения: термины заменяются числами из terms; допускаются только числа и + − / ( )."""
+    tokens = re.findall(r"[A-Z]+", expr)
+    missing = [t for t in tokens if t not in terms]
+    if missing:
+        raise KeyError(missing[0])
+    text = re.sub(r"[A-Z]+", lambda m: f"({terms[m.group(0)]!r})", expr).replace("−", "-")
+    if not re.fullmatch(r"[0-9.eE+\-*/() ]+", text):
+        raise ValueError(f"недопустимые символы: {expr}")
+    return eval(text, {"__builtins__": {}}, {})  # только числа и арифметика — проверено выше
+
+
+def check_formula_chains(rows, schema, id_col, col):
+    """«ABBR = прямая формула = … »: начинается с аббревиатуры записи; термины — TP/FP/TN/FN, доли матрицы ошибок
+    (formula.aliases) или метрики той же области (их прямая формула); все части цепочки равны на наборах чисел."""
+    f = schema["formula"]
+    empty = schema["empty"]
+    out = []
+    by_area = {}
+    for r in rows:
+        if r["Тип сущности"] == "метрика" and r["Аббревиатура en"] != empty and r[col] != empty:
+            parts = [p.strip() for p in r[col].split("=")]
+            if len(parts) >= 2:
+                by_area.setdefault(r["Область (часть ключа)"], {})[r["Аббревиатура en"]] = parts[1]
+    for r in rows:
+        value = r[col]
+        if value == empty:
+            continue
+        rid = r[id_col]
+        parts = [p.strip() for p in value.split("=")]
+        if parts[0] != r["Аббревиатура en"] or len(parts) < 2:
+            out.append((rid, col, "цепочка начинается с аббревиатуры записи и содержит формулу", value))
+            continue
+        peers = {k: v for k, v in by_area.get(r["Область (часть ключа)"], {}).items() if k != parts[0]}
+        allowed = set(f["counts"]) | set(f["aliases"]) | set(peers)
+        unknown = sorted({t for p in parts[1:] for t in re.findall(r"[A-Z]+", p)} - allowed)
+        if unknown:
+            out.append((rid, col, f"термины вне TP/FP/TN/FN, долей матрицы ошибок и метрик области "
+                                  f"«{r['Область (часть ключа)']}»: {', '.join(unknown)}", value))
+            continue
+        for counts in f["check_values"]:
+            terms = dict(counts)
+            try:
+                for name, expr in f["aliases"].items():
+                    terms[name] = _evaluate(expr, counts)
+                for name, expr in peers.items():
+                    terms[name] = _evaluate(expr, terms)
+                results = [_evaluate(p, terms) for p in parts[1:]]
+            except (KeyError, ValueError, ZeroDivisionError, SyntaxError) as e:
+                out.append((rid, col, f"цепочку нельзя вычислить: {type(e).__name__} {e}", value))
+                break
+            if any(abs(x - results[0]) > 1e-9 for x in results[1:]):
+                out.append((rid, col, "части цепочки не равны при подстановке чисел", value))
+                break
     return out
 
 

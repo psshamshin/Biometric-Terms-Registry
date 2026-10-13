@@ -14,6 +14,7 @@
 Команды для генерации текстов (только печатают, ничего не пишут):
     python -m src.curated fingerprint <id>   # текущий отпечаток строки общего реестра
     python -m src.curated template <id>      # заготовка curated-файла с текущим отпечатком
+    python -m src.curated peers <id>         # что можно использовать в цепочке формулы этой метрики
 """
 import hashlib
 import json
@@ -102,12 +103,25 @@ def _registry_row(rid):
 def main(argv):
     from src.checks import load_schema
 
-    if len(argv) != 2 or argv[0] not in ("fingerprint", "template"):
-        sys.exit("использование: python -m src.curated fingerprint|template <id>")
+    if len(argv) != 2 or argv[0] not in ("fingerprint", "template", "peers"):
+        sys.exit("использование: python -m src.curated fingerprint|template|peers <id>")
     schema = load_schema()
     c = schema["curated"]
     row = _registry_row(argv[1])
     fp = fingerprint(row, schema)
+    if argv[0] == "peers":
+        f = schema["formula"]
+        area = row["Область (часть ключа)"]
+        rows = json.loads(REGISTRY_JSON.read_text(encoding="utf-8"))
+        print(f"{row['Аббревиатура en']} — область «{area}». В цепочке формулы можно использовать:")
+        print("  счётчики: " + ", ".join(f["counts"]))
+        for name, expr in f["aliases"].items():
+            print(f"  {name} = {expr}")
+        for r in rows:
+            if (r["id"] != row["id"] and r["Тип сущности"] == "метрика" and r["Область (часть ключа)"] == area
+                    and r["Аббревиатура en"]):
+                print(f"  {r['Аббревиатура en']}: формула {r['Формула *'] or '— (пока нет; в цепочке не использовать)'}")
+        return
     if argv[0] == "fingerprint":
         print(fp)
         return

@@ -143,12 +143,9 @@ def merge_group(group, schema, merge_cfg, conflict_flags):
     syn_sep = ", "
     chosen = {row[c].lower() for c in ("Наименование ru", "Наименование en", "Аббревиатура ru")
               if not _empty(row[c], empty)}
-    synonyms = [s for s in _dedupe([s for r in group for s in _split(r["row"]["Синонимы (все)"], syn_sep, empty)]
+    synonyms = [s for s in _dedupe([s for r in group for s in _split(r["row"]["Синонимы"], syn_sep, empty)]
                                    + extra_synonyms, empty) if s.lower() not in chosen]
-    max_syn = next(r["list"]["max_items"] for r in checks.column_spec(schema, "Синонимы")["rules"] if "list" in r)
-    if len(synonyms) > max_syn:
-        flags.append("synonyms_over_limit")
-    row["Синонимы"] = syn_sep.join(synonyms[:max_syn]) or empty
+    row["Синонимы"] = syn_sep.join(synonyms) or empty
 
     types = {r["row"]["Тип сущности"] for r in group}
     if len(types) == 1:
@@ -168,7 +165,6 @@ def merge_group(group, schema, merge_cfg, conflict_flags):
     row.update({
         "Ключ": primary["Ключ"],
         "Источники": sep.join(dict.fromkeys(r["sid"] for r in group)),
-        "Синонимы (все)": syn_sep.join(synonyms) or empty,
         "Флаги": sep.join(_dedupe(flags + source_flags, empty)) or empty,
     })
     return row, reasons

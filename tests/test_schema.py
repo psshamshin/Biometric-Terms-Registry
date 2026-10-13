@@ -71,7 +71,7 @@ def test_parser_allowed_is_subset():
 def test_service_columns():
     assert SCHEMA["service_columns"] == [
         "Ключ", "Пункт", "Раздел", "Страница", "Примеры",
-        "Примечания", "Синонимы (все)", "Исключённые", "Флаги",
+        "Примечания", "Исключённые", "Флаги",
     ]
 
 
@@ -100,7 +100,6 @@ def test_example_passes(col):
     ("Наименование en", "biometric гесодпШоп", "термин"),                 # кириллица в латинском поле
     ("Область (часть ключа)", "биометрия - верификация", "метрика"),      # не тот разделитель
     ("Тип сущности", "метрики", "метрика"),
-    ("Синонимы", "a, b, c, d, e, f", "термин"),
     ("ГОСТ ISO/IEC 2382-37-2016", "37.09.11 — Доля", "метрика"),
     ("Ссылки для проверки", "ГОСТ ISO/IEC 2382-37-2016 https://x", "метрика"),
     ("Связанные термины", "FMR — похожий термин", "метрика"),            # нет «парной метрики»
@@ -121,3 +120,8 @@ def test_source_column_accepts_several_points():
     assert validate_value(SCHEMA, col, "п. 3.23, 3.35 — Текст.", "метрика") == []
     assert validate_value(SCHEMA, col, "п. 3.23 — Текст.; п. 3.35 — Другой.", "метрика") == []
     assert validate_value(SCHEMA, col, "п. 3.23,3.35 — Текст.", "метрика") != []
+
+
+def test_synonyms_unlimited():
+    col = next(c for c in SCHEMA["columns"] if c["name"] == "Синонимы")
+    assert validate_value(SCHEMA, col, ", ".join(f"s{i}" for i in range(12)), "термин") == []
