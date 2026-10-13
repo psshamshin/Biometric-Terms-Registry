@@ -36,7 +36,7 @@ def all_values(requests):
 
 def test_columns_follow_schema_and_service_columns():
     expected = [c["name"] for c in SCHEMA["columns"]] + MERGE_CFG["service_columns"]
-    assert COLS == expected and "Синонимы (все)" in COLS
+    assert COLS == expected and "Синонимы" in COLS
     real = json.loads((ROOT / "data/out/registry.json").read_text(encoding="utf-8"))
     assert list(real[0]) == COLS                      # совпадает с колонками общего реестра
     s = sheets(real)

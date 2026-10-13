@@ -152,3 +152,43 @@ def test_real_registry_is_clean(out_dir):
     res = merge(out_dir, CURATED_DIR)
     assert res["violations"] == [] and res["dict_errors"] == []
     assert res["curated"]["problems"] == [] and res["curated"]["orphans"] == []
+
+
+# ---------- формула: цепочка равенств в пределах области
+
+CHAINS = {   # целевые цепочки для всех метрик реестра — так их должен писать prompts/generate_fields.md
+    "fnmr": "FNMR = FN / (FN + TP) = FNR = 1 − TPR",
+    "fmr": "FMR = FP / (FP + TN) = FPR = 1 − TNR",
+    "frr": "FRR = FN / (FN + TP) = FNR = 1 − TPR",
+    "far": "FAR = FP / (FP + TN) = FPR = 1 − TNR",
+    "fnir": "FNIR = FN / (FN + TP) = FNR = 1 − TPR = 1 − TPIR",
+    "tpir": "TPIR = TP / (TP + FN) = TPR = 1 − FNR = 1 − FNIR",
+    "fpir": "FPIR = FP / (FP + TN) = FPR = 1 − TNR",
+    "iapar": "IAPAR = FP / (FP + TN) = FPR = 1 − TNR",
+}
+
+
+def _formula_violations(out_dir, tmp_path, formulas):
+    cur = tmp_path / "curated"
+    for rid, formula in formulas.items():
+        write(cur, rid, **{"Формула *": formula, "отпечаток": current_fp(out_dir, rid)})
+    res = merge(out_dir, cur)
+    return [v for v in res["violations"] if v[1] == "Формула *"]
+
+
+def test_target_chains_pass(out_dir, tmp_path):
+    assert _formula_violations(out_dir, tmp_path, CHAINS) == []
+
+
+@pytest.mark.parametrize("rid,formula,reason", [
+    ("fmr", "FMR = FP / (FP + TN) = 1 − FRR", "вне"),          # FRR — другая область (система целиком)
+    ("fnmr", "FNMR = FN / (FN + TP) = TPR", "не равны"),       # математически неверно
+    ("fnmr", "FNMR = FN / (FN + TP) = XYZ", "вне"),            # неизвестный термин
+    ("fnmr", "FMR = FN / (FN + TP)", "начинается"),            # не своя аббревиатура
+    ("fnir", "FNIR = FN / (FN + TP) = 1 − TPR = 2 − TPR", None),  # «2» запрещена шаблоном
+])
+def test_bad_chains_rejected(out_dir, tmp_path, rid, formula, reason):
+    v = _formula_violations(out_dir, tmp_path, {rid: formula})
+    assert v, formula
+    if reason:
+        assert any(reason in x[2] for x in v), v

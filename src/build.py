@@ -57,8 +57,6 @@ def build_rows(parsed, cfg, schema):
     source_cols = [c["name"] for c in schema["columns"] if c["filled_by"] == "source"]
     if std["source_column"] not in source_cols:
         raise ValueError(f"колонки источника {std['source_column']!r} нет в схеме")
-    max_syn = next(r["list"]["max_items"] for r in
-                   next(c for c in schema["columns"] if c["name"] == "Синонимы")["rules"] if "list" in r)
 
     for rec in parsed:
         rec["entity_type"], rec["status"] = classify(rec, schema)
@@ -74,8 +72,6 @@ def build_rows(parsed, cfg, schema):
     id_max_len = next(c for c in schema["columns"] if c["name"] == "id")["id_rule"]["max_len"]
     used = {}
     for rec in parsed:
-        if len(rec["synonyms"]) > max_syn:
-            _flag(rec, "synonyms_over_limit", f"синонимов {len(rec['synonyms'])} > {max_syn}")
         rec["id"] = make_id(rec, used, id_max_len)
         key_name = rec["abbr_en"] or rec["term_en"] or empty
         rec["key"] = schema["key_format"].format(name=key_name, area=rec["area"] or empty)
@@ -95,7 +91,7 @@ def build_rows(parsed, cfg, schema):
             "Наименование en": rec["term_en"] or empty,
             "Область (часть ключа)": rec["area"] or empty,
             "Тип сущности": rec["entity_type"],
-            "Синонимы": ", ".join(rec["synonyms"][:max_syn]) or empty,
+            "Синонимы": ", ".join(rec["synonyms"]) or empty,
             std["source_column"]: f"п. {rec['num']} — {rec['definition']}" if rec["definition"] else empty,
             "Связанные термины": related or empty,
             "Статус": rec["status"],
@@ -109,7 +105,6 @@ def build_rows(parsed, cfg, schema):
             "Страница": str(rec["page"]),
             "Примеры": "\n".join(f"{i}. {t}" for i, t in enumerate(rec["examples"], 1)) or empty,
             "Примечания": "\n".join(f"{i}. {t}" for i, t in enumerate(rec["notes"], 1)) or empty,
-            "Синонимы (все)": ", ".join(rec["synonyms"]) or empty,
             "Исключённые": ", ".join(rec["excluded"]) or empty,
             "Флаги": ", ".join(rec["flags"]) or empty,
         })

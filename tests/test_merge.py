@@ -25,7 +25,7 @@ def row(sid, num, ru, en, abbr=None, area=AREA_V, etype="термин", rid=None
         "Наименование ru": ru, "Наименование en": en, "Аббревиатура en": abbr,
         "id": rid or (abbr or en.replace(" ", "-")).lower(), "Область (часть ключа)": area,
         "Тип сущности": etype, "Статус": "черновик" if etype == "метрика" else "отложено",
-        "Синонимы": ", ".join(synonyms[:5]) or None, "Синонимы (все)": ", ".join(synonyms) or None,
+        "Синонимы": ", ".join(synonyms) or None,
         SRC[sid]: f"п. {num} — Определение {sid}.", "Ссылки для проверки": f"{SRC[sid]}: https://{sid}.example",
         "Связанные термины": related, "Ключ": f"{abbr or en} | {area}", "Пункт": num, "Флаги": ", ".join(flags) or None,
     })
@@ -100,12 +100,12 @@ def test_id_collision(tmp_path):
     assert sum("id_collision" in flags(r) for r in res["rows"]) == 1
 
 
-def test_synonyms_over_limit(tmp_path):
+def test_all_synonyms_kept(tmp_path):
     res, _ = merge(tmp_path, [row("a", "1", "Ка", "k", synonyms=["s1", "s2", "s3"])],
                    [row("b", "2", "Ка", "k", synonyms=["s4", "s5", "s6"])])
     r = res["rows"][0]
-    assert r["Синонимы"] == "s1, s2, s3, s4, s5" and r["Синонимы (все)"] == "s1, s2, s3, s4, s5, s6"
-    assert "synonyms_over_limit" in flags(r)
+    assert r["Синонимы"] == "s1, s2, s3, s4, s5, s6"            # ограничения на число синонимов нет
+    assert "Синонимы (все)" not in r
 
 
 def test_related_union_and_must_exist(tmp_path):
