@@ -244,3 +244,26 @@ def test_without_new_keys_brackets_stay_text():
     # у 2382-37 ключей groups/parameters нет: квадратная скобка — часть текста, как раньше
     rec = _parse(["3.99 термин [x] (term): Определение."], CFG)
     assert rec["term_ru"] == "Термин [x]"
+
+
+# ---------- ключи разбора ГОСТ Р 58624.1: «Примеры» с пунктами, служебный хвост строки
+
+CFG_58624_1 = yaml.safe_load((ROOT / "config/gost_r_58624_1_2019.yaml").read_text(encoding="utf-8"))
+
+
+def test_example_list_items():
+    rec = _parse(["3.99 термин (term): Определение.", "Примеры", "1 Первый", "продолжение.", "2 Второй."], CFG_58624_1)
+    assert rec["examples"] == ["Первый продолжение.", "Второй."]
+
+
+def test_service_fragments_keep_article_number():
+    from src.clean import CleaningLog, drop_service_lines
+    log = CleaningLog()
+    out = drop_service_lines([(1, "3.2 _______"), (1, "термин (term): Определение.")], CFG_58624_1, log)
+    assert [l for _, l in out] == ["3.2", "термин (term): Определение."]
+
+
+def test_without_service_fragments_line_stays():
+    from src.clean import CleaningLog, drop_service_lines
+    out = drop_service_lines([(1, "3.2 _______")], CFG, CleaningLog())
+    assert [l for _, l in out] == ["3.2 _______"]

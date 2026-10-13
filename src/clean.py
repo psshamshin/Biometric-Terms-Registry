@@ -147,12 +147,18 @@ def _first_word(s):
 
 def drop_service_lines(lines, cfg, log):
     patterns = [re.compile(p) for p in cfg["cleaning"]["service_lines"]]
+    fragments = [re.compile(p) for p in cfg["cleaning"].get("service_fragments", [])]  # служебный хвост внутри строки
     out = []
     for page, line in lines:
         if any(p.match(line) for p in patterns):
             log.add(page, line, "", "служебная строка")
-        else:
-            out.append((page, line))
+            continue
+        for p in fragments:
+            cut = p.sub("", line).rstrip()
+            if cut != line:
+                log.add(page, line, cut, "служебный фрагмент строки")
+                line = cut
+        out.append((page, line))
     return out
 
 

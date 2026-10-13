@@ -15,9 +15,13 @@ standards:
     connected: 2026-10-13             # дата подключения — для README
     golden: tests/golden_gost_r_71414_1_2024.yaml
     miro: null                      # сверка с Miro для новых стандартов не выполняется
+  - config: config/gost_r_58624_1_2019.yaml
+    connected: 2026-10-13             # дата подключения — для README
+    golden: tests/golden_gost_r_58624_1_2019.yaml
+    miro: null                      # стандарта нет в Miro — сверка не выполняется
 
 # Порядок источников там, где значения расходятся: первый — главный.
-priority: [gost_2382_37, gost_r_58624_4_2025, gost_r_71414_1_2024]
+priority: [gost_2382_37, gost_r_58624_4_2025, gost_r_71414_1_2024, gost_r_58624_1_2019]
 
 # Служебные колонки общего реестра — после колонок схемы, в этом порядке.
 service_columns: [Ключ, Источники, Флаги]

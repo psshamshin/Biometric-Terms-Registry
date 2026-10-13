@@ -29,10 +29,11 @@ REGISTRY_JSON = ROOT / "data/out/registry.json"
 
 
 def fingerprint(row, schema):
-    """sha256 колонок источников строки (в порядке схемы), первые 16 знаков."""
+    """sha256 заполненных колонок источников строки (в порядке схемы), первые 16 знаков.
+    Пустые колонки не учитываются: новый стандарт, у которого нет формулировки для метрики, отпечаток не меняет."""
     empty = schema["empty"]
     sources = [c["name"] for c in schema["columns"] if c["filled_by"] == "source"]
-    payload = "".join(f"{c}\t{empty if row.get(c) is None else row[c]}\n" for c in sources)
+    payload = "".join(f"{c}\t{row[c]}\n" for c in sources if row.get(c) not in (None, empty))
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
 
 
