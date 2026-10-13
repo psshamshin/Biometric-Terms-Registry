@@ -1,6 +1,7 @@
 """Публикация общего реестра (data/out/registry.json) в Google Таблицу — только для чтения.
 
-Листы «Реестр», «Метрики», «Сводка» каждый раз очищаются и записываются целиком.
+Листы «Реестр» и «Сводка» каждый раз очищаются и записываются целиком.
+Метрики отбираются фильтром на листе «Реестр» (колонка «Тип сущности»).
 Всё пишется через Sheets API v4 (spreadsheets.get + spreadsheets.batchUpdate), Drive API не нужен:
 - на каждый лист — один batchUpdate: создать лист, размер, очистка, значения, оформление, защита;
 - каждое значение — stringValue (или numberValue в «Сводке»): строки не разбираются как формулы;
@@ -23,7 +24,9 @@ ROOT = Path(__file__).resolve().parent.parent
 REGISTRY_JSON = ROOT / "data/out/registry.json"
 MERGE_CONFIG = ROOT / "config/merge.yaml"
 
-SHEET_REGISTRY, SHEET_METRICS, SHEET_SUMMARY = "Реестр", "Метрики", "Сводка"
+SHEET_REGISTRY, SHEET_SUMMARY = "Реестр", "Сводка"
+# Листы прежних версий публикации: удаляются, только если на них наша защита (то есть их создала публикация).
+OBSOLETE_SHEETS = ["Метрики"]
 PROTECTION_DESCRIPTION = "registry-publish: таблица перезаписывается автоматически"
 WARNING = ("Таблица перезаписывается автоматически. Правки здесь пропадут. "
            "Тексты и статусы меняются через data/curated/ в репозитории")
@@ -38,7 +41,7 @@ MEDIUM_COLUMNS = {"Наименование ru", "Наименование en", 
 # ---------------------------------------------------------------- данные листов (без сети)
 
 def table_columns(schema, merge_cfg):
-    """Колонки листов «Реестр» и «Метрики»: по схеме, затем служебные колонки общего реестра."""
+    """Колонки листа «Реестр»: по схеме, затем служебные колонки общего реестра."""
     return [c["name"] for c in schema["columns"]] + list(merge_cfg["service_columns"])
 
 
@@ -76,7 +79,6 @@ def build_sheets(rows, schema, merge_cfg, standards, sha, commit_url, updated_at
 
     return {
         SHEET_REGISTRY: table(rows),
-        SHEET_METRICS: table(metrics),
         SHEET_SUMMARY: {"header": ["Параметр", "Значение"], "rows": summary, "widths": [260, 700],
                         "wrap": [False, True], "links": links},
     }
@@ -145,7 +147,8 @@ def build_requests(sheet, sheet_id, title, exists, own_protection_ids):
 
 
 def plan_requests(sheets, metadata):
-    """{название листа: запросы} по метаданным таблицы (ответ spreadsheets.get). Чужие листы не трогаются."""
+    """{название листа: запросы} по метаданным таблицы (ответ spreadsheets.get). Чужие листы не трогаются.
+    Устаревший лист из OBSOLETE_SHEETS с нашей защитой удаляется отдельным запросом (ключ «удалить «…»»)."""
     existing = {s["properties"]["title"]: s for s in metadata.get("sheets", [])}
     next_id = max([s["properties"]["sheetId"] for s in metadata.get("sheets", [])] + [0]) + 1
     plan = {}
@@ -159,6 +162,10 @@ def plan_requests(sheets, metadata):
         else:
             plan[title] = build_requests(sheet, next_id, title, False, set())
             next_id += 1
+    for title in OBSOLETE_SHEETS:
+        props = existing.get(title)
+        if props and any(p.get("description") == PROTECTION_DESCRIPTION for p in props.get("protectedRanges", [])):
+            plan[f"удалить «{title}»"] = [{"deleteSheet": {"sheetId": props["properties"]["sheetId"]}}]
     return plan
 
 
@@ -171,7 +178,7 @@ def publish(service, spreadsheet_id, sheets):
         fields="sheets(properties(sheetId,title),protectedRanges(protectedRangeId,description))").execute()
     for title, requests in plan_requests(sheets, metadata).items():
         service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body={"requests": requests}).execute()
-        print(f"лист «{title}»: записано строк {len(sheets[title]['rows'])}")
+        print(f"лист «{title}»: записано строк {len(sheets[title]['rows'])}" if title in sheets else f"{title}: готово")
 
 
 def _service(info):

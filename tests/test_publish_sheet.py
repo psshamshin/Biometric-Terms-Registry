@@ -40,15 +40,19 @@ def test_columns_follow_schema_and_service_columns():
     real = json.loads((ROOT / "data/out/registry.json").read_text(encoding="utf-8"))
     assert list(real[0]) == COLS                      # совпадает с колонками общего реестра
     s = sheets(real)
-    assert s[ps.SHEET_REGISTRY]["header"] == COLS == s[ps.SHEET_METRICS]["header"]
+    assert s[ps.SHEET_REGISTRY]["header"] == COLS and list(s) == [ps.SHEET_REGISTRY, ps.SHEET_SUMMARY]
     assert len(s[ps.SHEET_REGISTRY]["rows"]) == len(real)
 
 
-def test_metrics_sheet_has_only_metrics():
-    rows = [row(id="a", **{"Тип сущности": "метрика"}), row(id="b"), row(id="c", **{"Тип сущности": "метрика"})]
-    metrics = sheets(rows)[ps.SHEET_METRICS]["rows"]
-    t = COLS.index("Тип сущности")
-    assert [r[COLS.index("id")] for r in metrics] == ["a", "c"] and all(r[t] == "метрика" for r in metrics)
+def test_no_metrics_sheet_and_obsolete_one_deleted_only_if_ours():
+    rows = [row(id="a", **{"Тип сущности": "метрика"}), row(id="b")]
+    s = sheets(rows)
+    assert "Метрики" not in s and len(s[ps.SHEET_REGISTRY]["rows"]) == 2      # метрики — фильтром на «Реестр»
+    ours = {"sheets": [{"properties": {"sheetId": 4, "title": "Метрики"},
+                        "protectedRanges": [{"protectedRangeId": 1, "description": ps.PROTECTION_DESCRIPTION}]}]}
+    assert ps.plan_requests(s, ours)["удалить «Метрики»"] == [{"deleteSheet": {"sheetId": 4}}]
+    foreign = {"sheets": [{"properties": {"sheetId": 4, "title": "Метрики"}}]}  # без нашей защиты — не трогаем
+    assert not any("deleteSheet" in str(r) for p in ps.plan_requests(s, foreign).values() for r in p)
 
 
 @pytest.mark.parametrize("value", ["=SUM(A1:A2)", "+7 999", "-1", "=IMPORTXML(\"x\")", "—"])
@@ -67,7 +71,7 @@ def test_none_becomes_dash():
 
 def test_empty_registry():
     s = sheets([])
-    assert s[ps.SHEET_REGISTRY]["rows"] == [] and s[ps.SHEET_METRICS]["rows"] == []
+    assert s[ps.SHEET_REGISTRY]["rows"] == []
     reqs = ps.build_requests(s[ps.SHEET_REGISTRY], 1, ps.SHEET_REGISTRY, False, set())
     grid = reqs[0]["addSheet"]["properties"]["gridProperties"]
     assert grid["rowCount"] >= 2 and grid["frozenRowCount"] == 1   # закрепить можно не все строки
@@ -90,7 +94,7 @@ def test_request_structure_one_batch_per_sheet():
          "protectedRanges": [{"protectedRangeId": 11, "description": ps.PROTECTION_DESCRIPTION},
                              {"protectedRangeId": 12, "description": "чужая защита"}]}]}
     plan = ps.plan_requests(s, metadata)
-    assert list(plan) == [ps.SHEET_REGISTRY, ps.SHEET_METRICS, ps.SHEET_SUMMARY]
+    assert list(plan) == [ps.SHEET_REGISTRY, ps.SHEET_SUMMARY]
     reg = plan[ps.SHEET_REGISTRY]
     kinds = [next(iter(r)) for r in reg]
     assert kinds[0] == "updateSheetProperties" and "addSheet" not in kinds
@@ -101,8 +105,7 @@ def test_request_structure_one_batch_per_sheet():
     assert "setBasicFilter" in kinds and "repeatCell" in kinds and "updateDimensionProperties" in kinds
     header = next(r for r in reg if "updateCells" in r and "rows" in r["updateCells"])["updateCells"]["rows"][0]
     assert header["values"][0]["userEnteredFormat"]["textFormat"]["bold"] is True
-    new_ids = {plan[t][0]["addSheet"]["properties"]["sheetId"] for t in (ps.SHEET_METRICS, ps.SHEET_SUMMARY)}
-    assert new_ids == {8, 9}                                                     # не пересекаются с существующими
+    assert plan[ps.SHEET_SUMMARY][0]["addSheet"]["properties"]["sheetId"] == 8   # не пересекается с существующими                                                     # не пересекаются с существующими
     assert 0 not in set(_sheet_ids(plan))                                         # чужой лист (id 0) не упоминается
 
 
@@ -135,7 +138,7 @@ def test_same_registry_same_requests_except_time():
     real = json.loads((ROOT / "data/out/registry.json").read_text(encoding="utf-8"))
     a = ps.build_sheets(real, SCHEMA, MERGE_CFG, ["x"], "s", "u", T)
     b = ps.build_sheets(real, SCHEMA, MERGE_CFG, ["x"], "s", "u", datetime(2027, 1, 1, tzinfo=timezone.utc))
-    assert a[ps.SHEET_REGISTRY] == b[ps.SHEET_REGISTRY] and a[ps.SHEET_METRICS] == b[ps.SHEET_METRICS]
+    assert a[ps.SHEET_REGISTRY] == b[ps.SHEET_REGISTRY]
     assert a[ps.SHEET_SUMMARY]["rows"][1:] == b[ps.SHEET_SUMMARY]["rows"][1:]
 
 
@@ -171,11 +174,11 @@ def test_publish_with_fake_service(monkeypatch):
         def spreadsheets(self): return Sheets()
 
     ps.publish(Service(), "ID", sheets([row()]))
-    assert [c[0] for c in calls] == ["get", "batchUpdate", "batchUpdate", "batchUpdate"]   # по одному на лист
+    assert [c[0] for c in calls] == ["get", "batchUpdate", "batchUpdate"]   # по одному на лист
     assert all(c[1]["spreadsheetId"] == "ID" for c in calls)
 
 
 def test_dry_run(capsys):
     assert ps.main(["--dry-run"]) == 0
     out = capsys.readouterr().out
-    assert "== Реестр: строк" in out and "== Метрики" in out and "== Сводка" in out
+    assert "== Реестр: строк" in out and "== Сводка" in out and "== Метрики" not in out
