@@ -1,0 +1,70 @@
+"""Регрессия: выход каждого подключённого стандарта побайтно совпадает с его базовой копией
+data/out/_baseline/<std_id>/.
+
+Правило: после подключения стандарта заводится его базовая копия; регрессия проверяет все стандарты
+из config/merge.yaml. Стандарт без базовой копии — ошибка.
+registry.sqlite не входит ни в git, ни в базовые копии: его байты зависят от версии SQLite в Python.
+Его содержимое проверяет test_sqlite_matches_json (строки совпадают с registry.json).
+
+История базовых копий (2026-10-13):
+  - gost_2382_37: обновлена при подключении 58624.4 (новая колонка; путь к журналу очистки в report.md)
+    и при подключении 71414.1 (колонка «ГОСТ Р ИСО/МЭК 19795-1-2007» переименована);
+  - gost_r_58624_4_2025: заведена до подключения 71414.1, обновлена после переименования колонки;
+  - gost_r_71414_1_2024: заведена при подключении;
+  - все три: обновлены при переносе в GitHub — колонки источников строятся из merge.yaml (порядок как в merge.yaml),
+    колонка «ГОСТ Р 58624.3-2019 (ИСО/МЭК 30107-3)» убрана; registry.sqlite убран из базовых копий.
+  Каждое обновление — после сверки: кроме изменённой колонки (в ней везде «—») отличий нет.
+"""
+import json
+import sqlite3
+from pathlib import Path
+
+import pytest
+import yaml
+
+from run import build_registry, std_id
+
+ROOT = Path(__file__).resolve().parent.parent
+MERGE = yaml.safe_load((ROOT / "config/merge.yaml").read_text(encoding="utf-8"))
+STANDARDS = [std_id(e["config"]) for e in MERGE["standards"]]
+NOT_COMPARED = {"registry.sqlite"}  # собирается при прогоне, проверяется по содержимому
+
+
+@pytest.fixture(scope="module")
+def outputs(tmp_path_factory):
+    out = {}
+    for entry in MERGE["standards"]:
+        sid = std_id(entry["config"])
+        out[sid] = tmp_path_factory.mktemp(sid)
+        build_registry(ROOT / entry["config"], out[sid])
+    return out
+
+
+@pytest.mark.parametrize("sid", STANDARDS)
+def test_baseline_exists(sid):
+    assert (ROOT / "data/out/_baseline" / sid / "registry.csv").exists(), f"нет базовой копии {sid}"
+
+
+@pytest.mark.parametrize("sid", STANDARDS)
+def test_matches_baseline(outputs, sid):
+    baseline = ROOT / "data/out/_baseline" / sid
+    produced = sorted(p.name for p in outputs[sid].iterdir() if p.is_file() and p.name not in NOT_COMPARED)
+    assert produced == sorted(p.name for p in baseline.iterdir() if p.is_file()), "состав файлов отличается"
+    for name in produced:
+        assert (outputs[sid] / name).read_bytes() == (baseline / name).read_bytes(), f"{sid}/{name} отличается"
+
+
+def sqlite_rows(path):
+    con = sqlite3.connect(path)
+    try:
+        cur = con.execute("SELECT * FROM terms")
+        cols = [d[0] for d in cur.description]
+        return [dict(zip(cols, r)) for r in cur.fetchall()]
+    finally:
+        con.close()
+
+
+@pytest.mark.parametrize("sid", STANDARDS)
+def test_sqlite_matches_json(outputs, sid):
+    rows = json.loads((outputs[sid] / "registry.json").read_text(encoding="utf-8"))
+    assert sqlite_rows(outputs[sid] / "registry.sqlite") == rows

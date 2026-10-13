@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version-file: '.python-version'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Full run
+        run: python run.py
+
+      - name: Tests
+        run: python -m pytest -q
+
+      - name: Committed output is up to date
+        run: |
+          git diff --stat -- data/out
+          git diff --exit-code -- data/out
+          untracked=$(git ls-files --others --exclude-standard -- data/out)
+          if [ -n "$untracked" ]; then
+            echo "Не закоммичены новые файлы выхода:"
+            echo "$untracked"
+            exit 1
+          fi

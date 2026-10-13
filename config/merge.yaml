@@ -1,0 +1,31 @@
+# Объединение реестров подключённых стандартов в общий реестр (data/out/registry.*).
+# Согласовано 2026-10-13.
+
+# Подключённые стандарты. std_id = имя конфига без .yaml; выход стандарта — data/out/{std_id}/.
+standards:
+  - config: config/gost_2382_37.yaml
+    connected: 2026-10-13             # дата подключения — для README
+    golden: tests/golden.yaml
+    miro: tests/fixtures/miro_2382.yaml
+  - config: config/gost_r_58624_4_2025.yaml
+    connected: 2026-10-13             # дата подключения — для README
+    golden: tests/golden_gost_r_58624_4_2025.yaml
+    miro: null                      # стандарта нет в Miro — сверка не выполняется
+  - config: config/gost_r_71414_1_2024.yaml
+    connected: 2026-10-13             # дата подключения — для README
+    golden: tests/golden_gost_r_71414_1_2024.yaml
+    miro: null                      # сверка с Miro для новых стандартов не выполняется
+
+# Порядок источников там, где значения расходятся: первый — главный.
+priority: [gost_2382_37, gost_r_58624_4_2025, gost_r_71414_1_2024]
+
+# Служебные колонки общего реестра — после колонок схемы, в этом порядке.
+service_columns: [Ключ, Источники, Синонимы (все), Флаги]
+
+# Наименование en при сравнении: без учёта регистра, дефис = пробел.
+name_en_normalize:
+  lowercase: true
+  hyphen_as_space: true
+
+flag_prefix_sep: ': '               # флаги стандартов в общем реестре: «std_id: флаг»
+list_sep: ', '                      # «Источники», «Синонимы (все)», «Флаги»

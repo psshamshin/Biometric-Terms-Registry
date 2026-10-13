@@ -1,0 +1,12 @@
+﻿аббр. ru,аббр. en,расшифровка ru,расшифровка en
+ВДПАСпд,IAPARap,вероятность допуска предъявления при атаке самозванца с одним ВИАБП с потенциалом атаки,—
+ВИАБП,PAIS,вид инструмента атаки на биометрическое предъявление,presentation attack instrument species
+ВЛД,FAR,вероятность ложного допуска,False accept rate
+ВЛОИ,FNIR,вероятность ложноотрицательной идентификации,false negative identification rate
+ВЛПИ,FPIR,вероятность ложноположительной идентификации,false positive identification rate
+ВЛНД,FRR,вероятность ложного недопуска,False reject rate
+ДОПБС,FS-PD,длительность обработки полнокомплектной биометрической системы,full-system processing duration
+ОАБП,PAD,обнаружение атаки на биометрическое предъявление,Presentation attack detection
+ОИ,IUT,объект испытаний,Item under test
+ПА,РА,потенциал атаки,attack potential
+ПИН-код,PIN code,персональный идентификационный номер,personal identification number
