@@ -1,0 +1,25 @@
+﻿аббр. ru,аббр. en,расшифровка ru,расшифровка en
+ВИАБП,PAIS,вид инструмента атаки на биометрическое предъявление,Presentation attack instrument species
+ВИПАС,IAPIR,вероятность идентификации предъявления при атаке самозванца,Impostor attack presentation identification rate
+ВЛД,FAR,вероятность ложного допуска,False accept rate
+ВЛОИ,FNIR,вероятность ложноотрицательной идентификации,False negative identification rate
+ВЛПИ,FPIR,вероятность ложноположительной идентификации,False positive identification rate
+ВЛНД,FRR,вероятность ложного недопуска,False reject rate
+ВНиПАУ,CAPNIR,вероятность неидентификации предъявления при атаке укрывателя личности,Concealer attack presentation non-identification rate
+ВНсПАУ,CAPNMR,вероятность несовпадения предъявления при атаке укрывателя личности,Concealer attack presentation non-match rate
+ВОБР,FTE,вероятность отказа биометрической регистрации,Failure to enrol rate
+ВОКПА,APCER,вероятность ошибки классификации предъявления при атаке,Attack presentation classification error rate
+ВППА,APAR,вероятность получения предъявления при атаке,Attack presentation acquisition rate
+ВООПА,APNRR,вероятность отсутствия ответа на предъявление артефакта,Attack presentation non-response rate
+ВОКПБП,BPCER,вероятность ошибки классификации подлинных биометрических предъявлений,Bona fide presentation classification error rate
+ВООПБП,BPNRR,вероятность отсутствия ответа на подлинное биометрическое предъявление,Bona fide presentation non-response rate
+ВОПБД,FTA,вероятность отказа получения биометрических данных,Failure to acquire rate
+ВСПАС,IAPMR,вероятность совпадения предъявления при атаке самозванца,Impostor attack presentation match rate
+ДОПБС,FS-PD,длительность обработки полнокомплектной биометрической системы,Full-system processing duration
+ДОПСБД,DCS-PD,длительность обработки подсистемой сбора биометрических данных,Data capture subsystem processing duration
+ДОПО,PS-PD,длительность обработки подсистемой обнаружения атаки на биометрическое предъявление,PAD subsystem processing duration
+ИАБП,PAI,инструмент атаки на биометрическое предъявление,Presentation attack instrument
+ОАБП,PAD,обнаружение атаки на биометрическое предъявление,Presentation attack detection
+ОИ,IUT,объект испытания,Item under test
+0 0,TOE,объект оценки,Target of evaluation
+П30П0П,FSDPP,профили защиты обнаружения подделки отпечатков пальцев,Fingerprint spoof detection protection profiles

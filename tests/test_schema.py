@@ -95,8 +95,10 @@ def test_example_passes(col):
     ("Наименование ru", "вероятность ложного несовпадения", "метрика"),   # строчная первая
     ("Наименование ru", "Вероятность (FNMR)", "метрика"),                 # скобки, латиница
     ("id", "FNMR", "метрика"),
-    ("Аббревиатура en", "FNMRxx", "метрика"),
-    ("Аббревиатура ru", "ВЛНС1", "метрика"),
+    ("Аббревиатура en", "FNMRFNMRX", "метрика"),                          # длиннее 8
+    ("Аббревиатура en", "FNМR", "метрика"),                               # кириллица в латинском поле
+    ("Аббревиатура ru", "ВЛНСВЛНСВ", "метрика"),                          # длиннее 8
+    ("Аббревиатура ru", "ВЛNС", "метрика"),                               # латиница в кириллическом поле
     ("Наименование en", "biometric гесодпШоп", "термин"),                 # кириллица в латинском поле
     ("Область (часть ключа)", "биометрия - верификация", "метрика"),      # не тот разделитель
     ("Тип сущности", "метрики", "метрика"),
@@ -108,6 +110,19 @@ def test_example_passes(col):
 def test_bad_values_rejected(column, value, entity_type):
     col = next(c for c in SCHEMA["columns"] if c["name"] == column)
     assert validate_value(SCHEMA, col, value, entity_type) != []
+
+
+@pytest.mark.parametrize("column,value", [
+    ("Аббревиатура en", "PS-PD"),
+    ("Аббревиатура en", "FSDPP2"),
+    ("Аббревиатура ru", "ВНсПАУ"),
+    ("Аббревиатура ru", "ВНиПАУ"),
+    ("Наименование en", "PAD subsystem processing duration"),
+    ("Наименование en", "Full-system 2 processing"),
+])
+def test_real_gost_formats_accepted(column, value):
+    col = next(c for c in SCHEMA["columns"] if c["name"] == column)
+    assert validate_value(SCHEMA, col, value, "термин") == []
 
 
 def test_no_pair_flag_exempts_metric_link():
