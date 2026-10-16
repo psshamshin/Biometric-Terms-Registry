@@ -173,9 +173,10 @@ def clean(pages, cfg, log):
         start, end = find_bounds(lines, bounds)
         if name != "terms":
             start += 1  # заголовок указателя или раздела — не запись
-        part = join_hyphenated(lines[start:end], cfg, log, corpus)
-        if name == "terms":
+        part = lines[start:end]
+        if name == "terms":  # служебные строки (сноска внизу страницы) убираем до склейки: перенос может идти через них
             part = drop_service_lines(part, cfg, log)
+        part = join_hyphenated(part, cfg, log, corpus)
         parts[name] = part
     return parts, furniture
 
