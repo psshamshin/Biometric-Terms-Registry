@@ -145,6 +145,19 @@ def _first_word(s):
     return (s, "") if i < 0 else (s[:i], s[i:])
 
 
+def drop_footnotes(lines, cfg, log):
+    """Сноски внизу страницы убираются до склейки переносов: сноска может стоять между строкой с переносом
+    и её продолжением на следующей странице. Ключ cleaning.footnote_lines; по умолчанию сносок нет."""
+    patterns = [re.compile(p) for p in cfg["cleaning"].get("footnote_lines", [])]
+    out = []
+    for page, line in lines:
+        if any(p.match(line) for p in patterns):
+            log.add(page, line, "", "сноска")
+            continue
+        out.append((page, line))
+    return out
+
+
 def drop_service_lines(lines, cfg, log):
     patterns = [re.compile(p) for p in cfg["cleaning"]["service_lines"]]
     fragments = [re.compile(p) for p in cfg["cleaning"].get("service_fragments", [])]  # служебный хвост внутри строки
@@ -173,7 +186,10 @@ def clean(pages, cfg, log):
         start, end = find_bounds(lines, bounds)
         if name != "terms":
             start += 1  # заголовок указателя или раздела — не запись
-        part = join_hyphenated(lines[start:end], cfg, log, corpus)
+        chunk = lines[start:end]
+        if name == "terms":
+            chunk = drop_footnotes(chunk, cfg, log)
+        part = join_hyphenated(chunk, cfg, log, corpus)
         if name == "terms":
             part = drop_service_lines(part, cfg, log)
         parts[name] = part
