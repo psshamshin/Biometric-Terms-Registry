@@ -81,7 +81,7 @@ python3.12 -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/python -m pytest -q    # все проверки
 ```
 
-- **Правила работы:** [`docs/RULES.md`](docs/RULES.md) — инструменты, согласованные решения, порядок проверок. Задания агенту — `prompts/add_gost.md`, `prompts/generate_fields.md`.
+- **Правила работы:** [`docs/RULES.md`](docs/RULES.md) — инструменты, согласованные решения, порядок проверок. Задания агенту — `prompts/add_gost.md`, `prompts/generate_fields.md`. Журнал принятых решений — [`docs/DECISIONS.md`](docs/DECISIONS.md); черновик конфига нового стандарта — `python -m src.new_standard data/raw/NNNNN.pdf`.
 - **Структура реестра:** `config/registry_schema.yaml`; настройки стандарта — `config/<std_id>.yaml`; перечень стандартов — `config/merge.yaml`.
 - **Отчёты:** `data/out/<std_id>/report.md` (стандарт), `data/out/merge_report.md` (объединение); утверждённые копии — `data/out/_baseline/`.
 
