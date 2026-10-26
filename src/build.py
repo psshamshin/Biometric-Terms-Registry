@@ -9,6 +9,7 @@ import sqlite3
 
 from src.checks import mark_key_duplicates
 from src.classify import _flag, area, classify, find_pairs
+from src.links import definition_links
 
 def make_id(rec, used, max_len):
     if rec["abbr_en"]:
@@ -112,6 +113,12 @@ def build_rows(parsed, cfg, schema):
             "Флаги": ", ".join(rec["flags"]) or empty,
         })
         rows.append(row)
+
+    for row in rows:  # «используется в определении»: записи стандарта, названные в его формулировке
+        current = [] if row["Связанные термины"] == empty else row["Связанные термины"].split(". ")
+        used = definition_links(row, rows, empty, [std["source_column"]], {i.split(" — ")[0] for i in current})
+        if used:
+            row["Связанные термины"] = ". ".join(current + used)
     return rows
 
 

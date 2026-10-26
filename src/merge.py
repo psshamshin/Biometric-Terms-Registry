@@ -13,6 +13,7 @@ import re
 from src import checks
 from src.build import write_outputs
 from src.curated import apply_curated
+from src.links import definition_links
 
 
 def _empty(v, empty):
@@ -200,6 +201,13 @@ def merge_registries(merge_cfg, schema, out_dir, curated_dir=None):
         m["row"]["id"] = rid
 
     rows = [m["row"] for m in merged]
+    source_cols = [c["name"] for c in schema["columns"] if c["filled_by"] == "source"]
+    link_sep = checks._list_sep(schema, "Связанные термины")
+    for row in rows:  # «используется в определении» и для записей из других стандартов (тексты источников — объединённые)
+        current = _split(row["Связанные термины"], link_sep, empty)
+        used = definition_links(row, rows, empty, source_cols, {i.split(" — ")[0] for i in current})
+        if used:
+            row["Связанные термины"] = link_sep.join(current + used)
     curated = apply_curated(rows, schema, curated_dir) if curated_dir is not None else None
     columns = [c["name"] for c in schema["columns"]] + merge_cfg["service_columns"]
     write_outputs(rows, schema, out_dir, columns)

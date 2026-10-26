@@ -58,8 +58,8 @@ def test_all_37_09_metrics_complete(result):
                     "ГОСТ ISO/IEC 2382-37-2016", "Ссылки для проверки"):
             assert r[col] != "—", (r["Пункт"], col)
         assert r["Статус"] == "черновик"
-    assert metrics["37.09.09"]["Связанные термины"] == "FNMR — парная метрика"
-    assert metrics["37.09.11"]["Связанные термины"] == "FMR — парная метрика"
+    assert metrics["37.09.09"]["Связанные термины"].startswith("FNMR — парная метрика")
+    assert metrics["37.09.11"]["Связанные термины"].startswith("FMR — парная метрика")
 
 
 def test_every_flag_explained(result):
@@ -84,7 +84,8 @@ def test_metric_without_pair_needs_no_pair_flag(result):
     row = dict(next(r for r in result["rows"] if r["Пункт"] == "37.09.04"))
     row["Флаги"] = "—"
     violations, _ = checks.check_schema([row], SCHEMA)
-    assert any(v[1] == "Связанные термины" and v[2] == "обязательно" for v in violations)
+    # «используется в определении» не заменяет пару: нет «парной метрики» — нарушение без флага no_pair
+    assert any(v[1] == "Связанные термины" and ("обязательно" in v[2] or "парная метрика" in v[2]) for v in violations)
 
 
 def test_links_must_exist(result):

@@ -1,6 +1,6 @@
 """Проверка текстов колонок 13, 14, 16 (prompts/validate_fields.md) → data/out/validation_report.md.
 
-Автоматически: формат (f), формулы (c), направление «лучше» (d), записи реестра из источника без связи (e).
+Автоматически: формат (f), формулы (c), отсутствие направления «лучше» (d), записи реестра из источника без связи (e).
 Вручную (по prompts/validate_fields.md): утверждения без опоры (a), противоречия между определениями (b),
 подстановка чисел в пример (c). Результат ручной проверки — data/review/validation_review.yaml;
 запись привязана к хэшу текстов и источников: изменились тексты — проверку нужно повторить («ревью устарело»).
@@ -12,6 +12,8 @@ from pathlib import Path
 
 import yaml
 
+from src.links import mentions
+
 ROOT = Path(__file__).resolve().parent.parent
 REVIEW_PATH = ROOT / "data/review/validation_review.yaml"
 LONG, SHORT, FORMULA = "Переработанное длинное определение", "Короткое определение", "Формула *"
@@ -21,7 +23,7 @@ BLOCKS = [
     ("a", "а) Утверждения опираются на источники"),
     ("b", "б) Короткое определение не противоречит длинному и источникам"),
     ("c", "в) Формула сходится с определением"),
-    ("d", "г) Направление «лучше» по правилу"),
+    ("d", "г) Нет направления «Ниже/Выше — лучше»"),
     ("e", "д) Записи из источника есть в «Связанных терминах»"),
 ]
 
@@ -44,52 +46,10 @@ def review_hash(row, schema):
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:12]
 
 
-def _tokens(text):
-    return re.findall(r"[a-zа-я0-9]+", text.lower().replace("ё", "е"))
-
-
-def _stem(token):
-    """Основа слова для сравнения падежей: без последних трёх букв, но не короче четырёх."""
-    return token[:max(4, len(token) - 3)]
-
-
-MODIFIER_ENDINGS = ("ий", "ый", "ой", "ая", "ое", "ие", "ые", "ть")  # одиночные прилагательные и глаголы — слишком общие
-
-
-def mentions(text, rows, self_id, empty):
-    """Записи реестра, чьё наименование (или синоним) встречается в тексте источника.
-    Слова сравниваются по основе (падежи); совпадения внутри более длинных отбрасываются."""
-    toks = [_stem(t) for t in _tokens(text)]
-    hits = []
-    for r in rows:
-        if r["id"] == self_id:
-            continue
-        names = [r["Наименование ru"]] + ([] if r["Синонимы"] == empty else r["Синонимы"].split(", "))
-        for name in names:
-            raw = _tokens(name)
-            name_toks = [_stem(t) for t in raw]
-            if not raw or (len(raw) == 1 and (len(raw[0]) < 8 or raw[0].endswith(MODIFIER_ENDINGS))):
-                continue
-            n = len(name_toks)
-            for i in range(len(toks) - n + 1):
-                if toks[i:i + n] == name_toks:
-                    hits.append((i, i + n, r))
-                    break
-    keep = [h for h in hits if not any(o is not h and o[0] <= h[0] and h[1] <= o[1] and (o[1] - o[0]) > (h[1] - h[0])
-                                       for o in hits)]
-    return list(dict.fromkeys(h[2]["id"] for h in keep))
-
-
 def related_labels(row, empty):
     if row["Связанные термины"] == empty:
         return set()
     return {item.split(" — ")[0] for item in row["Связанные термины"].split(". ")}
-
-
-def expected_direction(row, schema):
-    """«Выше — лучше» — у метрики, чья прямая формула TP / (TP + FN) (доля верных исходов); иначе «Ниже — лучше»."""
-    parts = [p.strip() for p in row[FORMULA].split("=")][1:2]
-    return HIGHER if parts == ["TP / (TP + FN)"] else LOWER
 
 
 def check_row(row, rows, schema):
@@ -110,27 +70,19 @@ def check_row(row, rows, schema):
     if is_metric and "условн" not in long.lower():
         res["f"].append("длинное: пример не помечен словом «условный»")
 
+    if LOWER in short or HIGHER in short or LOWER in long or HIGHER in long:
+        res["d"].append("в тексте есть «Ниже/Выше — лучше»: направление не указывается")
+    if re.search(r"[Чч]ем (ниже|выше)", long):
+        res["d"].append("в длинном определении есть «как читать значение» («Чем ниже / выше значение…»)")
+
     if not is_metric:
         if re.search(r"\d", long):
             res["f"].append("длинное: у термина в тексте числа — сверить с источником (выдуманных чисел быть не должно)")
-        if short.endswith((LOWER, HIGHER)):
-            res["d"].append("у термина короткое определение оканчивается на «Ниже/Выше — лучше»")
-        if re.search(r"[Чч]ем (ниже|выше)", long):
-            res["d"].append("у термина в длинном определении есть «как читать значение»")
         if formula != empty or "formula_na" in flags:
             res["c"].append("у термина формула должна быть «—» без флага formula_na")
         if row["Статус"] != "черновик":
             res["f"].append(f"статус термина с текстами «{row['Статус']}», нужен «черновик»")
     else:
-        want = expected_direction(row, schema)
-        if not short.endswith(want):
-            res["d"].append(f"короткое: по правилу «{want}»")
-        phrase = "Чем ниже значение" if want == LOWER else "Чем выше значение"
-        other = "Чем выше значение" if want == LOWER else "Чем ниже значение"
-        if phrase not in long:
-            res["d"].append(f"длинное: нет фразы «{phrase}…»")
-        if other in long:
-            res["d"].append(f"длинное: фраза «{other}…» противоречит правилу «{want}»")
         abbr = row["Аббревиатура en"]
         if formula == empty:
             if "formula_na" not in flags:

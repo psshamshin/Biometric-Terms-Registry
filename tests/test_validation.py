@@ -32,24 +32,20 @@ def row(**kw):
     return base
 
 
-LONG = ("Показывает что-то. " * 14) + "Пример: 100 условных попыток, 2 неудачи. Чем ниже значение, тем лучше."
+LONG = ("Показывает что-то. " * 14) + "Пример: 100 условных попыток, 2 неудачи."
 
 
-def test_direction_rule():
-    assert v.expected_direction(row(**{"Формула *": "TPIR = TP / (TP + FN) = TPR"}), SCHEMA) == v.HIGHER
-    assert v.expected_direction(row(**{"Формула *": "FMR = FP / (FP + TN) = FPR"}), SCHEMA) == v.LOWER
-    assert v.expected_direction(row(**{"Формула *": E}), SCHEMA) == v.LOWER
-
-
-def test_metric_direction_and_format_findings():
-    r = row(**{v.LONG: LONG.replace("ниже", "выше"), v.SHORT: "Как часто. Ниже — лучше", "Формула *": E,
-               "Флаги": "formula_na"})
-    res = v.check_row(r, [r], SCHEMA)
-    assert any("противоречит" in f for f in res["d"]) and not res["f"] and not res["c"]
+def test_direction_is_forbidden_for_metrics():
+    ok = row(**{v.LONG: LONG, v.SHORT: "Как часто что-то случается", "Формула *": E, "Флаги": "formula_na"})
+    assert not any(v.check_row(ok, [ok], SCHEMA).values())
+    for long, short in ((LONG + " Чем ниже значение, тем лучше.", "Как часто"), (LONG, "Как часто. Ниже — лучше"),
+                        (LONG, "Как часто. Выше — лучше")):
+        r = row(**{v.LONG: long, v.SHORT: short, "Формула *": E, "Флаги": "formula_na"})
+        assert v.check_row(r, [r], SCHEMA)["d"], (long, short)
 
 
 def test_formula_text_in_long_is_format_finding():
-    r = row(**{v.LONG: LONG + " Формулу через TP, FP, TN, FN записать нельзя.", v.SHORT: "Как часто. Ниже — лучше",
+    r = row(**{v.LONG: LONG + " Формулу через TP, FP, TN, FN записать нельзя.", v.SHORT: "Как часто",
                "Формула *": E, "Флаги": "formula_na"})
     assert v.check_row(r, [r], SCHEMA)["f"]
 
@@ -70,6 +66,20 @@ def test_mentions_and_related():
     assert v.mentions(src, [other], "x", E) == ["fm"]
     assert v.mentions("Ничего общего.", [other], "x", E) == []
     assert v.related_labels(row(**{"Связанные термины": "FNIR — дополнение. FPIR — парная метрика"}), E) == {"FNIR", "FPIR"}
+
+
+def test_definition_links_from_source_text():
+    """Запись, названная в формулировке источника, получает «— используется в определении»; уже связанная — нет."""
+    from src.links import definition_links
+
+    cols = ["Колонка"]
+    fm = row(id="fm", **{"Наименование ru": "Ложное совпадение", "Аббревиатура en": E, "Колонка": E})
+    fnmr = row(id="fnmr", **{"Наименование ru": "Вероятность", "Аббревиатура en": "FNMR", "Колонка": E})
+    me = row(id="me", **{"Колонка": "п. 1 — Доля попыток, приведших к ложному совпадению."})
+    rows = [fm, fnmr, me]
+    assert definition_links(me, rows, E, cols, set()) == ["Ложное совпадение — используется в определении"]
+    assert definition_links(me, rows, E, cols, {"Ложное совпадение"}) == []
+    assert definition_links(fm, rows, E, cols, set()) == []   # себя не связываем
 
 
 def test_real_registry_has_no_findings_except_links():
