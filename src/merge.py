@@ -7,13 +7,14 @@
   - Аббревиатура en совпала, Область разная — не объединять, флаг area_conflict;
   - Наименование en совпало, аббревиатура или область разные — не объединять, флаг merge_candidate.
 """
+import csv
 import json
 import re
 
 from src import checks
 from src.build import write_outputs
 from src.curated import apply_curated
-from src.links import definition_links
+from src.links import abbreviation_aliases, definition_links
 
 
 def _empty(v, empty):
@@ -38,6 +39,18 @@ def load_records(merge_cfg, schema, out_dir):
         for row in rows:
             records.append({"sid": sid, "row": {k: (empty if v is None else v) for k, v in row.items()}})
     return records
+
+
+def load_abbreviations(merge_cfg, out_dir):
+    """Разделы «Сокращения» стандартов из data/out/{std_id}/abbreviations.csv (есть не у всех)."""
+    out = []
+    for sid in merge_cfg["priority"]:
+        path = out_dir / sid / "abbreviations.csv"
+        if path.exists():
+            with open(path, encoding="utf-8-sig", newline="") as f:
+                out += [{"abbr_ru": r["аббр. ru"], "abbr_en": r["аббр. en"], "text_ru": r["расшифровка ru"]}
+                        for r in csv.DictReader(f)]
+    return out
 
 
 def _group_key(rec, rules, empty):
@@ -203,9 +216,10 @@ def merge_registries(merge_cfg, schema, out_dir, curated_dir=None):
     rows = [m["row"] for m in merged]
     source_cols = [c["name"] for c in schema["columns"] if c["filled_by"] == "source"]
     link_sep = checks._list_sep(schema, "Связанные термины")
+    aliases = abbreviation_aliases(rows, load_abbreviations(merge_cfg, out_dir), empty)
     for row in rows:  # «используется в определении» и для записей из других стандартов (тексты источников — объединённые)
         current = _split(row["Связанные термины"], link_sep, empty)
-        used = definition_links(row, rows, empty, source_cols, {i.split(" — ")[0] for i in current})
+        used = definition_links(row, rows, empty, source_cols, {i.split(" — ")[0] for i in current}, aliases)
         if used:
             row["Связанные термины"] = link_sep.join(current + used)
     curated = apply_curated(rows, schema, curated_dir) if curated_dir is not None else None
@@ -214,7 +228,7 @@ def merge_registries(merge_cfg, schema, out_dir, curated_dir=None):
 
     violations, _ = checks.check_schema(rows, schema, id_col="Ключ")
     result = {
-        "rows": rows, "merged": merged, "records": records, "conflicts": conflicts,
+        "rows": rows, "aliases": aliases, "merged": merged, "records": records, "conflicts": conflicts,
         "id_collisions": id_collisions, "violations": violations, "curated": curated,
         "dict_errors": checks.check_dictionaries(rows, schema, id_col="Ключ",
                                                  free_status_keys=curated["status_keys"] if curated else ()),

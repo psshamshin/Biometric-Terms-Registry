@@ -96,7 +96,7 @@ def build_registry(config_path, out_dir=None):
         write_abbreviations(out_dir / "abbreviations.csv", abbreviations)
         abbr = (actions, unmatched, len(abbreviations))
 
-    rows = build_rows(parsed, cfg, schema)
+    rows = build_rows(parsed, cfg, schema, abbreviations if abbr else None)
     write_outputs(rows, schema, out_dir)
 
     violations, waiting = checks.check_schema(rows, schema)
@@ -142,7 +142,7 @@ def run_all(out_dir=OUT, readme_path=None):
         results[sid] = build_registry(ROOT / entry["config"], Path(out_dir) / sid)
     schema = checks.load_schema()
     merged = merge_registries(merge_cfg, schema, Path(out_dir), curated_dir=CURATED_DIR)
-    validation.write_report(Path(out_dir) / "validation_report.md", merged["rows"], schema, validation.load_review())
+    validation.write_report(Path(out_dir) / "validation_report.md", merged["rows"], schema, validation.load_review(), merged["aliases"])
     if readme_path:
         text = Path(readme_path).read_text(encoding="utf-8")
         Path(readme_path).write_text(readme.render(text, readme_sections(results)), encoding="utf-8")

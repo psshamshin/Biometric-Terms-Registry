@@ -47,6 +47,10 @@
 #   - «Связанные термины»: третий тип связи «используется в определении» — запись, названная в формулировке источника
 #     (строится автоматически, src/links.py); «парная метрика» и «дополнение» не затронуты;
 #   - флаг amended: формулировка колонки источника изменена по «Изменению № …» (ключ amendments конфига); формат колонки прежний.
+# Правки по проверке Kimi (2026-10-26, задача #34, по указанию владельца реестра):
+#   - pairs: добавлено правило attack presentation ↔ bona fide presentation (APCER ↔ BPCER, APNRR ↔ BPNRR);
+#   - formula.direct: TN / (FP + TN) для CAPNMR и CAPNIR (формула у них больше не formula_na);
+#   - «используется в определении»: сопоставление по словоформам, сокращениям и синонимам (src/links.py) — схема не менялась.
 
 version: 1
 empty: "—"            # пустое значение в CSV; в JSON/SQLite — null
@@ -309,6 +313,7 @@ pairs:
   - {prefix: 'non-'}                     # false match rate ↔ false non-match rate
   - {swap: [accept, reject]}             # false accept rate ↔ false reject rate
   - {swap: [negative, positive]}         # false-negative ↔ false-positive identification rate
+  - {swap: [attack presentation, bona fide presentation]}  # APCER ↔ BPCER, APNRR ↔ BPNRR (задача #34)
 
 # Дополнения (2026-10-26): метрики, которые в сумме дают 1 (ВИПИ + ВЛОИ = 1, п. 3.25 «Примечания» 71414.1).
 # Те же правила сопоставления названий, что у pairs; связь «X — дополнение» не заменяет «парную метрику».
@@ -360,6 +365,7 @@ formula:
     FN / (FN + TP): [FNMR, FRR, BPCER, FNIR]
     FP / (FP + TN): [FMR, FAR, APCER, FPIR, IAPAR, IAPIR, IAPMR]
     TP / (TP + FN): [TPIR]
+    TN / (FP + TN): [CAPNMR, CAPNIR]   # атака укрывателя — отрицательный класс, несовпадение — отрицательное решение
   check_values:
     - {TP: 7, FN: 3, FP: 2, TN: 11}
     - {TP: 13, FN: 5, FP: 17, TN: 19}

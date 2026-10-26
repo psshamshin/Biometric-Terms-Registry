@@ -151,6 +151,18 @@ def test_pairs():
     assert "8" not in pairs                               # TPIR — без пары
 
 
+def test_pairs_attack_vs_bona_fide():
+    ms = [_rec(num=n, term_en=t) for n, t in [
+        ("1", "attack presentation classification error rate"), ("2", "bona fide presentation classification error rate"),
+        ("3", "attack presentation non-response rate"), ("4", "bona fide presentation non-response rate"),
+        ("5", "attack presentation acquisition rate"), ("6", "impostor attack presentation match rate"),
+        ("7", "concealer attack presentation non-match rate")]]
+    pairs = find_pairs(ms, SCHEMA["pairs"])
+    assert [p["num"] for p in pairs["1"]] == ["2"] and [p["num"] for p in pairs["2"]] == ["1"]
+    assert [p["num"] for p in pairs["3"]] == ["4"] and [p["num"] for p in pairs["4"]] == ["3"]
+    assert not {"5", "6", "7"} & set(pairs)           # метрики без «подлинной» пары пар не получают
+
+
 def test_synonym_clash():
     recs = [_rec(num="a", term_ru="Порог", term_en="threshold"),
             _rec(num="b", term_ru="Фильтровать", term_en="filter", synonyms=["threshold"])]
