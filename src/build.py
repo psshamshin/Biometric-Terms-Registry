@@ -9,7 +9,7 @@ import sqlite3
 
 from src.checks import mark_key_duplicates
 from src.classify import _flag, area, classify, find_pairs
-from src.links import definition_links
+from src.links import abbreviation_aliases, definition_links
 
 def make_id(rec, used, max_len):
     if rec["abbr_en"]:
@@ -52,7 +52,7 @@ def mark_synonym_clashes(records):
             _flag(r, "synonym_clash", "; ".join(clashes))
 
 
-def build_rows(parsed, cfg, schema):
+def build_rows(parsed, cfg, schema, abbreviations=None):
     empty = schema["empty"]
     std = cfg["standard"]
     source_cols = [c["name"] for c in schema["columns"] if c["filled_by"] == "source"]
@@ -114,9 +114,10 @@ def build_rows(parsed, cfg, schema):
         })
         rows.append(row)
 
+    aliases = abbreviation_aliases(rows, [{**a, "abbr_en": a["abbr_en"] or empty} for a in abbreviations or []], empty)
     for row in rows:  # «используется в определении»: записи стандарта, названные в его формулировке
         current = [] if row["Связанные термины"] == empty else row["Связанные термины"].split(". ")
-        used = definition_links(row, rows, empty, [std["source_column"]], {i.split(" — ")[0] for i in current})
+        used = definition_links(row, rows, empty, [std["source_column"]], {i.split(" — ")[0] for i in current}, aliases)
         if used:
             row["Связанные термины"] = ". ".join(current + used)
     return rows

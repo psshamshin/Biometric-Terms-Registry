@@ -52,7 +52,7 @@ def related_labels(row, empty):
     return {item.split(" — ")[0] for item in row["Связанные термины"].split(". ")}
 
 
-def check_row(row, rows, schema):
+def check_row(row, rows, schema, aliases=None):
     """Автоматические проверки одной записи с текстами → {блок: [замечание]}."""
     empty = schema["empty"]
     is_metric = row["Тип сущности"] == "метрика"
@@ -100,7 +100,7 @@ def check_row(row, rows, schema):
     src = source_text(row, schema)
     labels = related_labels(row, empty)
     missing = []
-    for rid in mentions(src, rows, row["id"], empty):
+    for rid in mentions(src, rows, row["id"], empty, aliases):
         other = next(r for r in rows if r["id"] == rid)
         if not ({other["Аббревиатура en"], other["Наименование ru"]} & labels):
             missing.append(other["Аббревиатура en"] if other["Аббревиатура en"] != empty else other["Наименование ru"])
@@ -109,13 +109,13 @@ def check_row(row, rows, schema):
     return res
 
 
-def validate(rows, schema, review):
+def validate(rows, schema, review, aliases=None):
     empty = schema["empty"]
     records = []
     for row in rows:
         if row[LONG] == empty and row[SHORT] == empty and row[FORMULA] == empty:
             continue
-        auto = check_row(row, rows, schema)
+        auto = check_row(row, rows, schema, aliases)
         entry = review["records"].get(row["id"])
         h = review_hash(row, schema)
         manual = {"a": [], "b": [], "c": []}
@@ -150,9 +150,9 @@ def percent(records, key):
     return f"{100 * ok // len(records)}% ({ok} из {len(records)})"
 
 
-def write_report(path, rows, schema, review):
+def write_report(path, rows, schema, review, aliases=None):
     empty = schema["empty"]
-    records = validate(rows, schema, review)
+    records = validate(rows, schema, review, aliases)
     metrics = [r for r in records if r["type"] == "метрика"]
     terms = [r for r in records if r["type"] != "метрика"]
     all_metrics = [r for r in rows if r["Тип сущности"] == "метрика"]
