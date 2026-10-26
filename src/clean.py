@@ -196,15 +196,31 @@ def clean(pages, cfg, log):
     return parts, furniture
 
 
+def _replace_once(art, fix, what):
+    hits = [i for i, (_, l) in enumerate(art["lines"]) for _ in range(l.count(fix["было"]))]
+    if len(hits) != 1:
+        raise ValueError(f"{what} {fix} найдено {len(hits)} раз(а) в {art['num']}")
+    page, line = art["lines"][hits[0]]
+    art["lines"][hits[0]] = (page, line.replace(fix["было"], fix["стало"]))
+    return page
+
+
 def apply_corrections(articles, cfg, log):
     """Исправления ошибок распознавания из таблицы конфига. Каждое «было» должно встретиться ровно один раз."""
     by_num = {a["num"]: a for a in articles}
     for fix in cfg.get("corrections", []):
         art = by_num[str(fix["пункт"])]
-        hits = [i for i, (_, l) in enumerate(art["lines"]) for _ in range(l.count(fix["было"]))]
-        if len(hits) != 1:
-            raise ValueError(f"исправление {fix} найдено {len(hits)} раз(а) в {art['num']}")
-        page, line = art["lines"][hits[0]]
-        art["lines"][hits[0]] = (page, line.replace(fix["было"], fix["стало"]))
+        page = _replace_once(art, fix, "исправление")
         art.setdefault("corrections", []).append(fix)
         log.add(page, fix["было"], fix["стало"], f"ошибка распознавания ({art['num']})")
+
+
+def apply_amendments(articles, cfg, log):
+    """Правки статей по «Изменению № …» стандарта (ключ amendments): запись как у corrections плюс `изменение`
+    (номер и документ). Каждое «было» — ровно один раз; у статьи — флаг amended, в журнале очистки — строка правки."""
+    by_num = {a["num"]: a for a in articles}
+    for fix in cfg.get("amendments", []):
+        art = by_num[str(fix["пункт"])]
+        page = _replace_once(art, fix, "правка по изменению")
+        art.setdefault("amendments", []).append(fix)
+        log.add(page, fix["было"], fix["стало"], f"изменение к стандарту ({art['num']}): {fix['изменение']}")

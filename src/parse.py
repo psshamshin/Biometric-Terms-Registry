@@ -260,6 +260,11 @@ def parse_article(article, cfg, log):
         flags.append("ocr_fixed")
         result["flag_reasons"]["ocr_fixed"] = "; ".join(f"{c['было']} → {c['стало']}" for c in result["corrections"])
 
+    if article.get("amendments"):
+        flags.append("amended")
+        result["flag_reasons"]["amended"] = "; ".join(
+            f"{a['изменение']}: {a['было']} → {a['стало']}" for a in article["amendments"])
+
     suspects = [v for v in [result["term_en"], result["abbr_en"], *result["synonyms_en"], *result["excluded"]]
                 if v and CYRILLIC.search(v)]
     suspects += [v for v in [result["term_ru"], result["abbr_ru"], *result["synonyms_ru"]]

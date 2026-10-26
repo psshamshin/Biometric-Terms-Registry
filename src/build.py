@@ -9,6 +9,7 @@ import sqlite3
 
 from src.checks import mark_key_duplicates
 from src.classify import _flag, area, classify, find_pairs
+from src.links import definition_links
 
 def make_id(rec, used, max_len):
     if rec["abbr_en"]:
@@ -69,6 +70,8 @@ def build_rows(parsed, cfg, schema):
         if m["num"] not in pairs:
             _flag(m, "no_pair", f"для «{m['term_en']}» не найдена метрика с non-/accept-reject")
 
+    complements = find_pairs(metrics, schema.get("complements", []))
+
     id_max_len = next(c for c in schema["columns"] if c["name"] == "id")["id_rule"]["max_len"]
     used = {}
     for rec in parsed:
@@ -80,7 +83,8 @@ def build_rows(parsed, cfg, schema):
     rows = []
     for rec in parsed:
         related = ". ".join(dict.fromkeys(  # без повторов: пара может встретиться в стандарте дважды
-            f"{p['abbr_en'] or p['term_ru']} — парная метрика" for p in pairs.get(rec["num"], [])))
+            [f"{p['abbr_en'] or p['term_ru']} — парная метрика" for p in pairs.get(rec["num"], [])] +
+            [f"{p['abbr_en'] or p['term_ru']} — дополнение" for p in complements.get(rec["num"], [])]))
 
         row = {c["name"]: empty for c in schema["columns"]}
         row.update({
@@ -109,6 +113,12 @@ def build_rows(parsed, cfg, schema):
             "Флаги": ", ".join(rec["flags"]) or empty,
         })
         rows.append(row)
+
+    for row in rows:  # «используется в определении»: записи стандарта, названные в его формулировке
+        current = [] if row["Связанные термины"] == empty else row["Связанные термины"].split(". ")
+        used = definition_links(row, rows, empty, [std["source_column"]], {i.split(" — ")[0] for i in current})
+        if used:
+            row["Связанные термины"] = ". ".join(current + used)
     return rows
 
 
