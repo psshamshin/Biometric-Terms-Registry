@@ -53,4 +53,4 @@ jobs:
             actions: read
           claude_args: |
             --max-turns 150
-            --allowedTools "Bash(python run.py),Bash(python run.py:*),Bash(python -m pytest:*),Bash(python -m src.curated:*),Bash(python -m src.recon:*),Bash(python -m src.baseline:*)"
+            --allowedTools "Bash(python run.py),Bash(python run.py:*),Bash(python -m pytest:*),Bash(python -m src.curated:*),Bash(python -m src.recon:*),Bash(python -m src.baseline:*),Bash(python -m src.new_standard:*)"
