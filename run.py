@@ -12,7 +12,7 @@ from pathlib import Path
 
 import yaml
 
-from src import checks
+from src import checks, validation
 from src.build import build_rows, write_outputs
 from src.clean import CleaningLog, apply_corrections, clean
 from src.curated import CURATED_DIR
@@ -139,7 +139,9 @@ def run_all(out_dir=OUT, readme_path=None):
     for entry in merge_cfg["standards"]:
         sid = std_id(entry["config"])
         results[sid] = build_registry(ROOT / entry["config"], Path(out_dir) / sid)
-    merged = merge_registries(merge_cfg, checks.load_schema(), Path(out_dir), curated_dir=CURATED_DIR)
+    schema = checks.load_schema()
+    merged = merge_registries(merge_cfg, schema, Path(out_dir), curated_dir=CURATED_DIR)
+    validation.write_report(Path(out_dir) / "validation_report.md", merged["rows"], schema, validation.load_review())
     if readme_path:
         text = Path(readme_path).read_text(encoding="utf-8")
         Path(readme_path).write_text(readme.render(text, readme_sections(results)), encoding="utf-8")

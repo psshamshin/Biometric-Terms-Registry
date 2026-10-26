@@ -36,6 +36,10 @@
 #   - проверки смешения алфавитов (флаг ocr_suspect), пустых значений и длины не менялись;
 #   - признак метрики А (classification.sign_a.abbr_en_pattern) не менялся: аббревиатура с дефисом метрикой не становится.
 #   - новая колонка источника «ГОСТ Р 58624.3-2019 (ИСО/МЭК 30107-3)» (из merge.yaml).
+# Проверка текстов (2026-10-26, задача #29, по указанию владельца реестра):
+#   - complements: связь «дополнение» (FNIR ↔ TPIR) в «Связанных терминах»; «парная метрика» не затронута;
+#   - тексты терминов (колонки 13, 14) допускаются в статусе «черновик» — правила в prompts/generate_fields.md;
+#   - отчёт проверки текстов data/out/validation_report.md (prompts/validate_fields.md).
 
 version: 1
 empty: "—"            # пустое значение в CSV; в JSON/SQLite — null
@@ -301,6 +305,11 @@ pairs:
   - {swap: [accept, reject]}             # false accept rate ↔ false reject rate
   - {swap: [negative, positive]}         # false-negative ↔ false-positive identification rate
 
+# Дополнения (2026-10-26): метрики, которые в сумме дают 1 (ВИПИ + ВЛОИ = 1, п. 3.25 «Примечания» 71414.1).
+# Те же правила сопоставления названий, что у pairs; связь «X — дополнение» не заменяет «парную метрику».
+complements:
+  - {swap: [false-negative, true-positive]}   # false-negative ↔ true-positive identification rate (FNIR ↔ TPIR)
+
 # Флаги — каждый с объяснением для отчёта.
 flags:
   header_unparsed: Заголовок статьи не разобран; сырой текст сохранён
@@ -341,6 +350,10 @@ formula:
     FNR: FN / (FN + TP)        # false negative rate
     FPR: FP / (FP + TN)        # false positive rate
     TNR: TN / (TN + FP)        # true negative rate
+  direct:                    # справочник прямых формул (prompts/generate_fields.md); читает проверка текстов
+    FN / (FN + TP): [FNMR, FRR, BPCER, FNIR]
+    FP / (FP + TN): [FMR, FAR, APCER, FPIR, IAPAR, IAPIR, IAPMR]
+    TP / (TP + FN): [TPIR]
   check_values:
     - {TP: 7, FN: 3, FP: 2, TN: 11}
     - {TP: 13, FN: 5, FP: 17, TN: 19}

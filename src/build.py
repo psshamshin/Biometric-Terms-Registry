@@ -69,6 +69,8 @@ def build_rows(parsed, cfg, schema):
         if m["num"] not in pairs:
             _flag(m, "no_pair", f"для «{m['term_en']}» не найдена метрика с non-/accept-reject")
 
+    complements = find_pairs(metrics, schema.get("complements", []))
+
     id_max_len = next(c for c in schema["columns"] if c["name"] == "id")["id_rule"]["max_len"]
     used = {}
     for rec in parsed:
@@ -80,7 +82,8 @@ def build_rows(parsed, cfg, schema):
     rows = []
     for rec in parsed:
         related = ". ".join(dict.fromkeys(  # без повторов: пара может встретиться в стандарте дважды
-            f"{p['abbr_en'] or p['term_ru']} — парная метрика" for p in pairs.get(rec["num"], [])))
+            [f"{p['abbr_en'] or p['term_ru']} — парная метрика" for p in pairs.get(rec["num"], [])] +
+            [f"{p['abbr_en'] or p['term_ru']} — дополнение" for p in complements.get(rec["num"], [])]))
 
         row = {c["name"]: empty for c in schema["columns"]}
         row.update({
