@@ -29,3 +29,14 @@ records:
   iapir: {hash: 77bf915bf549, a: [], b: [], c: []}
   iapmr: {hash: 28367fc7cc30, a: [], b: [], c: []}
   tpir: {hash: e2bc17875210, a: [], b: [], c: []}
+  dcs-pd: {hash: f3af2fa9890f, a: [], b: [], c: []}
+  det: {hash: dc5dbda2866b, a: [], b: [], c: []}
+  fs-pd: {hash: 603ef5699541, a: [], b: [], c: []}
+  iut: {hash: 118abd395948, a: [], b: [], c: []}
+  pad: {hash: 5331c8318542, a: [], b: [], c: []}
+  pai-series: {hash: d0a90b1b9881, a: [], b: [], c: []}
+  pai-species: {hash: 2e15db5583e5, a: [], b: [], c: []}
+  pai: {hash: b0db0899bbc6, a: [], b: [], c: []}
+  ps-pd: {hash: 48d1b177c8a1, a: [], b: [], c: []}
+  sel: {hash: 25fb8cd6922d, a: [], b: [], c: []}
+  toe: {hash: 311d411d5607, a: [], b: [], c: []}
