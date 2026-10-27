@@ -134,7 +134,7 @@ def test_classify_sign_a_by_rate():
     rec = _rec(abbr_en="FTA", term_en="failure-to-acquire rate", definition="Доля чего-то")
     assert classify(rec, SCHEMA) == ("метрика", "черновик")
     rec = _rec(abbr_en=None, term_en="something", definition="Доля чего-то")
-    assert classify(rec, SCHEMA) == ("термин", "отложено") and "type_conflict" in rec["flags"]
+    assert classify(rec, SCHEMA) == ("термин", "черновик") and "type_conflict" in rec["flags"]
 
 
 def test_pairs():

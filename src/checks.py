@@ -96,11 +96,24 @@ def check_rule(schema, rule, value, flags=()):
         n = sum(1 for i in _items(value, sep) if i.endswith(" — " + spec["type"]))
         if n < spec["min"]:
             return f"связей «{spec['type']}» {n} < {spec['min']}"
+    elif "must_be_empty" in rule:
+        return "у термина должно быть «—»" if rule["must_be_empty"] else None
     elif ROW_OR_TABLE_RULES & rule.keys():
         return None
     else:
         raise ValueError(f"неизвестное правило в схеме: {rule}")
     return None
+
+
+def length_bounds(schema, column_name, entity_type):
+    """(min_len, max_len) колонки для типа записи — из rules схемы (с учётом applies_to)."""
+    lo, hi = 0, None
+    for rule in column_spec(schema, column_name)["rules"]:
+        if rule.get("applies_to") and entity_type not in rule["applies_to"]:
+            continue
+        lo = rule.get("min_len", lo)
+        hi = rule.get("max_len", hi)
+    return lo, hi
 
 
 def _list_sep(schema, column_name):
@@ -159,6 +172,10 @@ def check_schema(rows, schema, id_col="Пункт"):
                 continue
             for err in validate_value(schema, col, value, etype, flags):
                 violations.append((num, name, err, value))
+        tr = schema.get("text_rules")
+        if (tr and etype == "метрика" and "formula_na" not in flags and row[tr["metric_formula_or_flag"]] == empty
+                and any(row[c] != empty for c in tr["text_columns"])):
+            violations.append((num, tr["metric_formula_or_flag"], "у метрики с текстами нужна формула или formula_na", empty))
         filled = [c for c in source_cols if row[c] != empty]
         for rule in schema.get("row_rules", []):
             if rule.get("at_least_one_source") and not filled:
@@ -498,7 +515,7 @@ def write_report(path, ctx):
         ("Статей найдено", len(parsed)),
         ("Исключено целиком", 0),
         ("Метрик (черновик)", len(metrics)),
-        ("Терминов (отложено)", len(terms)),
+        ("Терминов (черновик)", len(terms)),
         ("— из них с type_conflict", len(conflicts)),
     ]))
 

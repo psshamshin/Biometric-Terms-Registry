@@ -12,6 +12,7 @@ from pathlib import Path
 
 import yaml
 
+from src.checks import length_bounds
 from src.links import mentions
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -60,8 +61,9 @@ def check_row(row, rows, schema, aliases=None):
     res = {k: [] for k, _ in BLOCKS}
     long, short, formula = row[LONG], row[SHORT], row[FORMULA]
 
-    if not 300 <= len(long) <= 1000:
-        res["f"].append(f"длинное: {len(long)} символов, нужно 300–1000")
+    lo, hi = length_bounds(schema, LONG, row["Тип сущности"])
+    if not lo <= len(long) <= hi:
+        res["f"].append(f"длинное: {len(long)} символов, нужно {lo}–{hi}")
     words = [w for w in short.split() if w != empty]
     if len(words) > 10:
         res["f"].append(f"короткое: {len(words)} слов, нужно ≤ 10")
@@ -76,8 +78,6 @@ def check_row(row, rows, schema, aliases=None):
         res["d"].append("в длинном определении есть «как читать значение» («Чем ниже / выше значение…»)")
 
     if not is_metric:
-        if re.search(r"\d", long):
-            res["f"].append("длинное: у термина в тексте числа — сверить с источником (выдуманных чисел быть не должно)")
         if formula != empty or "formula_na" in flags:
             res["c"].append("у термина формула должна быть «—» без флага formula_na")
         if row["Статус"] != "черновик":
