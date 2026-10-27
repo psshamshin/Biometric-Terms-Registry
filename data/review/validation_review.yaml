@@ -60,3 +60,7 @@ records:
   biometric-capture-subject: {hash: e64a1ef97740, a: [], b: [], c: []}
   biometric-capture-subsystem: {hash: 51aacb85fc2f, a: [], b: [], c: []}
   biometric-capture: {hash: 346857322c9c, a: [], b: [], c: []}
+  biometric-characteristic: {hash: 4e9a2646af9d, a: [], b: [], c: []}
+  biometric-characteristics-examiner: {hash: ce2bc00ee231, a: [], b: [], c: []}
+  biometric-claim: {hash: a0203915cf33, a: [], b: [], c: []}
+  biometric-data-record: {hash: ed9ff821a9a2, a: [], b: [], c: []}
