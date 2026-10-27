@@ -50,3 +50,13 @@ records:
   biometric-acquisition-process: {hash: f1e1e22a7cc7, a: [], b: [], c: []}
   biometric-applicant: {hash: 4a69b56033b6, a: [], b: [], c: []}
   biometric-application-database: {hash: 5a020cac5e39, a: [], b: [], c: []}
+  biometric-application-decision: {hash: 8d570001cdd1, a: [], b: [], c: []}
+  biometric-attendant: {hash: 630550266c89, a: [], b: [], c: []}
+  biometric-candidate-list: {hash: 65b6da21a412, a: [], b: [], c: []}
+  biometric-candidate-score: {hash: 68cd9fe758ca, a: [], b: [], c: []}
+  biometric-candidate: {hash: dd8ec3a3f78b, a: [], b: [], c: []}
+  biometric-capture-device: {hash: 615f2d77c4d6, a: [], b: [], c: []}
+  biometric-capture-process: {hash: ae286a6409d6, a: [], b: [], c: []}
+  biometric-capture-subject: {hash: e64a1ef97740, a: [], b: [], c: []}
+  biometric-capture-subsystem: {hash: 51aacb85fc2f, a: [], b: [], c: []}
+  biometric-capture: {hash: 346857322c9c, a: [], b: [], c: []}
