@@ -40,3 +40,13 @@ records:
   ps-pd: {hash: 48d1b177c8a1, a: [], b: [], c: []}
   sel: {hash: 25fb8cd6922d, a: [], b: [], c: []}
   toe: {hash: 311d411d5607, a: [], b: [], c: []}
+  acceptable-biometric-capture-attempt: {hash: 5f5efdee7822, a: [], b: [], c: []}
+  acquire: {hash: eacfda23eef5, a: [], b: [], c: []}
+  anonymized-biometric-data-record: {hash: 5766273250c0, a: [], b: [], c: []}
+  artefact: {hash: 9e258a5385ff, a: [], b: [], c: []}
+  attack-potential: {hash: 8e81a087c63c, a: [], b: [], c: []}
+  attack-type: {hash: 450b0eac0bbf, a: [], b: [], c: []}
+  authentication: {hash: b612b185f81f, a: [], b: [], c: []}
+  biometric-acquisition-process: {hash: f1e1e22a7cc7, a: [], b: [], c: []}
+  biometric-applicant: {hash: 4a69b56033b6, a: [], b: [], c: []}
+  biometric-application-database: {hash: 5a020cac5e39, a: [], b: [], c: []}
