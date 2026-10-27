@@ -168,7 +168,7 @@ def merge_group(group, schema, merge_cfg, conflict_flags):
         row["Тип сущности"] = "термин"
         flags.append("type_conflict")
         reasons["type_conflict"] = [", ".join(f"{r['sid']}: {r['row']['Тип сущности']}" for r in group)]
-    row["Статус"] = "черновик" if row["Тип сущности"] == "метрика" else "отложено"
+    row["Статус"] = "черновик"
 
     link_sep = checks._list_sep(schema, "Связанные термины")
     row["Связанные термины"] = link_sep.join(

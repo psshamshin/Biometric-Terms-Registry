@@ -24,7 +24,7 @@ def row(sid, num, ru, en, abbr=None, area=AREA_V, etype="термин", rid=None
     r.update({
         "Наименование ru": ru, "Наименование en": en, "Аббревиатура en": abbr,
         "id": rid or (abbr or en.replace(" ", "-")).lower(), "Область (часть ключа)": area,
-        "Тип сущности": etype, "Статус": "черновик" if etype == "метрика" else "отложено",
+        "Тип сущности": etype, "Статус": "черновик",
         "Синонимы": ", ".join(synonyms) or None,
         SRC[sid]: f"п. {num} — Определение {sid}.", "Ссылки для проверки": f"{SRC[sid]}: https://{sid}.example",
         "Связанные термины": related, "Ключ": f"{abbr or en} | {area}", "Пункт": num, "Флаги": ", ".join(flags) or None,
@@ -90,7 +90,7 @@ def test_type_conflict(tmp_path):
     res, _ = merge(tmp_path, [row("a", "1", "Доля Z", "z rate", "ZR", etype="метрика")],
                    [row("b", "2", "Доля Z", "z rate", "ZR", etype="термин")])
     r = res["rows"][0]
-    assert (r["Тип сущности"], r["Статус"]) == ("термин", "отложено") and "type_conflict" in flags(r)
+    assert (r["Тип сущности"], r["Статус"]) == ("термин", "черновик") and "type_conflict" in flags(r)
 
 
 def test_id_collision(tmp_path):

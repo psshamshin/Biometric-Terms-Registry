@@ -13,7 +13,8 @@
 
 Задачи выполняются строго по промптам:
 - `prompts/add_gost.md` — подключение нового ГОСТа и проверка всего реестра (раздел «Главные правила» обязателен всегда);
-- `prompts/generate_fields.md` — тексты для метрик (колонки 13, 14, 16); тексты терминов — только по явной просьбе, раздел «Термины»;
+- `prompts/generate_fields.md` — тексты для метрик (колонки 13, 14, 16) и терминов (колонки 13, 14), строго по списку
+  `python -m src.curated pending`; контекст записи — только `python -m src.curated context <id>`;
   направление «лучше» («Ниже/Выше — лучше») в текстах не указывается;
 - `prompts/validate_fields.md` — проверка текстов, отчёт `data/out/validation_report.md`, ручная часть — `data/review/validation_review.yaml`.
 
@@ -50,5 +51,7 @@ python run.py config/<std_id>.yaml     # один стандарт → data/out/
 python -m pytest -q                    # все проверки, включая регрессию по data/out/_baseline/
 python -m src.recon text|scan|mixed …  # разведка PDF: текст, полосы скана, ошибки распознавания
 python -m src.new_standard data/raw/NNNNN.pdf  # черновик конфига нового стандарта + сводка
+python -m src.curated pending [std_id] # записи (метрики и термины), которым нужны тексты
+python -m src.curated context <id>     # замкнутый пакет записи для генерации и проверки
 python -m src.baseline compare|update  # сверка с базовыми копиями («всё, кроме колонки») и их обновление
 ```
