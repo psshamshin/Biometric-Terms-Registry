@@ -15,6 +15,8 @@
     python -m src.curated fingerprint <id>   # текущий отпечаток строки общего реестра
     python -m src.curated template <id>      # заготовка curated-файла с текущим отпечатком
     python -m src.curated peers <id>         # что можно использовать в цепочке формулы этой метрики
+    python -m src.curated context <id>       # замкнутый пакет записи (= python -m src.context <id>)
+    python -m src.curated pending [std_id]   # записи, которым нужны тексты (= python -m src.pending)
 """
 import hashlib
 import json
@@ -104,8 +106,15 @@ def _registry_row(rid):
 def main(argv):
     from src.checks import load_schema
 
+    # context и pending — алиасы src.context / src.pending (в --allowedTools агента разрешён только src.curated)
+    if argv[:1] == ["context"]:
+        from src import context
+        return context.main(argv[1:])
+    if argv[:1] == ["pending"]:
+        from src import pending
+        return pending.main(argv[1:])
     if len(argv) != 2 or argv[0] not in ("fingerprint", "template", "peers"):
-        sys.exit("использование: python -m src.curated fingerprint|template|peers <id>")
+        sys.exit("использование: python -m src.curated fingerprint|template|peers|context <id> | pending [std_id]")
     schema = load_schema()
     c = schema["curated"]
     row = _registry_row(argv[1])
