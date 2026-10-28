@@ -21,6 +21,7 @@ ROWS = [
     r("identity-concealer", "Укрыватель личности"),
     r("rank", "Ранг идентификации"),
     r("attack", "Атака на биометрическое предъявление"),
+    r("applicant", "Заявитель"),
 ]
 
 
@@ -67,3 +68,9 @@ def test_no_extra_links():
     assert "rank" not in found("в ранге R или выше")
     assert found("вид спорта") == set()
     assert "pai" not in found("одного вида инструментов атаки на биометрическое предъявление")  # вложено в более длинное
+
+
+def test_whole_word_only():
+    assert "applicant" not in found("Как часто ложную заявку ошибочно принимают")   # «заявку» — не форма слова «заявитель»
+    assert "applicant" not in found("подлинное заявление ошибочно отклоняют")
+    assert "applicant" in found("сообщение заявителя о результате")                    # настоящая словоформа

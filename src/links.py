@@ -31,6 +31,8 @@ def _same_word(a, b):
             break
         common += 1
     shortest = min(len(a), len(b))
+    if max(len(a), len(b)) - common > 3:  # после общего начала — только окончание, а не другой корень (заявку ≠ заявитель)
+        return False
     if shortest < 4:
         return common == shortest >= 3
     return common >= max(4, shortest - 3)
