@@ -118,7 +118,7 @@ def package(rid, rows, std_rows, schema, aliases=None):
     links = links_of(row, rows)
     wanted = [(r, k) for r, k in links if is_metric or k == USED]
     for target, kind in wanted:
-        pkg["связанные"].append({"запись": label_of(target), "связь": kind,
+        pkg["связанные"].append({"запись": label_of(target), "наименование": target["Наименование ru"], "связь": kind,
                                  "формулировки_источников": sources_of(target, schema)})
 
     if is_metric:
