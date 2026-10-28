@@ -103,7 +103,7 @@ records:
   biometric-verification-decision: {hash: 974b485d3b5d, a: [], b: [], c: []}
   biometric-verification-system: {hash: 840e5e43aebd, a: [], b: [], c: []}
   biometric-verification: {hash: da4224de4b4d, a: [], b: [], c: []}
-  biometric: {hash: 1302ba335b58, a: [], b: [], c: []}
+  biometric: {hash: c7c6b099f166, a: [], b: [], c: []}
   bona-fide-presentation: {hash: 3556b3721594, a: [], b: [], c: []}
   capture-attempt: {hash: 0f67370d1128, a: [], b: [], c: []}
   capture-task: {hash: 8ed14a048b0c, a: [], b: [], c: []}
