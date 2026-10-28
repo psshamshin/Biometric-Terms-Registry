@@ -45,3 +45,13 @@ def test_58624_1_item_3_5_amended_by_change_1():
     assert r["Флаги"] == "amended"
     assert r["Примечания"].startswith("1. Атака на биометрическое предъявление может быть реализована")
     assert all(x["Флаги"] is None for x in rows if x["Пункт"] != "3.5")
+
+
+def test_merged_registry_presentation_attack_has_change_1_text():
+    """Общий реестр: колонка 58624.1 у presentation-attack — полный текст Изменения № 1 (PDF 72286, стр. 17–18)."""
+    rows = json.loads((ROOT / "data/out/registry.json").read_text(encoding="utf-8"))
+    r = next(x for x in rows if x["id"] == "presentation-attack")
+    assert r["ГОСТ Р 58624.1-2019 (ИСО/МЭК 30107-1)"] == (
+        "п. 3.5 — Предъявление инструмента атаки на биометрическое предъявление подсистеме сбора биометрических "
+        "данных с целью вмешательства в работу биометрической системы.")
+    assert "amended" in r["Флаги"]

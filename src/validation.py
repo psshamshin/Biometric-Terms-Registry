@@ -1,6 +1,7 @@
 """Проверка текстов колонок 13, 14, 16 (prompts/validate_fields.md) → data/out/validation_report.md.
 
-Автоматически: формат (f), формулы (c), отсутствие направления «лучше» (d), записи реестра из источника без связи (e).
+Автоматически: формат (f), формулы (c), отсутствие направления «лучше» (d), записи реестра из источника без связи (e),
+аббревиатуры (g), записи реестра в тексте, которых нет в пакете записи (h).
 Вручную (по prompts/validate_fields.md): утверждения без опоры (a), противоречия между определениями (b),
 подстановка чисел в пример (c). Результат ручной проверки — data/review/validation_review.yaml;
 запись привязана к хэшу текстов и источников: изменились тексты — проверку нужно повторить («ревью устарело»).
@@ -13,7 +14,8 @@ from pathlib import Path
 import yaml
 
 from src.checks import length_bounds
-from src.links import mentions
+from src.context import load_std_rows
+from src.links import _find, _tokens, abbreviation_hits, label, mentions
 
 ROOT = Path(__file__).resolve().parent.parent
 REVIEW_PATH = ROOT / "data/review/validation_review.yaml"
@@ -27,6 +29,7 @@ BLOCKS = [
     ("d", "г) Нет направления «Ниже/Выше — лучше»"),
     ("e", "д) Записи из источника есть в «Связанных терминах»"),
     ("g", "е) Аббревиатуры расшифрованы"),
+    ("h", "ж) Упомянутые записи реестра есть в пакете записи"),
 ]
 ABBR_RE = re.compile(r"(?<![\w-])(?:[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*|[А-ЯЁ][А-ЯЁ0-9]*(?:-[А-ЯЁ0-9]+)*)(?![\w-])")
 KNOWN_ABBR = {"ГОСТ", "ИСО", "МЭК", "ISO", "IEC"}  # обозначения стандартов расшифровки не требуют
@@ -69,8 +72,25 @@ def related_labels(row, empty):
     return {item.split(" — ")[0] for item in row["Связанные термины"].split(". ")}
 
 
-def check_row(row, rows, schema, aliases=None):
-    """Автоматические проверки одной записи с текстами → {блок: [замечание]}."""
+def inside_name(inner, outer):
+    """Наименование записи inner входит словами в наименование записи outer («Подлинное биометрическое предъявление»
+    в «Вероятность отсутствия ответа на подлинное биометрическое предъявление»): отдельным упоминанием не считается."""
+    return _find(_tokens(outer["Наименование ru"]), _tokens(inner["Наименование ru"])) is not None
+
+
+def notes_of(row, std_rows):
+    """«Примечания» и «Примеры» статей записи по стандартам (std_rows — {std_id: {Ключ: строка}}) одним текстом."""
+    parts = []
+    for sid in (row.get("Источники") or "").split(", "):
+        std = std_rows.get(sid, {}).get(row.get("Ключ"))
+        if std:
+            parts += [t for t in (std.get("Примечания"), std.get("Примеры")) if t]
+    return "\n".join(parts)
+
+
+def check_row(row, rows, schema, aliases=None, notes_text=""):
+    """Автоматические проверки одной записи с текстами → {блок: [замечание]}.
+    notes_text — «Примечания» и «Примеры» статьи записи (часть пакета)."""
     empty = schema["empty"]
     is_metric = row["Тип сущности"] == "метрика"
     flags = {f.rsplit(": ", 1)[-1] for f in row["Флаги"].split(", ")} if row["Флаги"] != empty else set()
@@ -130,16 +150,31 @@ def check_row(row, rows, schema, aliases=None):
             missing.append(other["Аббревиатура en"] if other["Аббревиатура en"] != empty else other["Наименование ru"])
     if missing:
         res["e"].append("в источнике упомянуты, но не связаны: " + "; ".join(missing))
+
+    # ж) запись реестра, названная в тексте (наименованием, синонимом или аббревиатурой), но отсутствующая в пакете записи.
+    # Пакет (src/context.py): «Связанные термины», расшифровки аббревиатур из формулировок источников и «Примечаний»/«Примеров»
+    # статьи (notes_text), записи, названные в формулировках источников и в «Примечаниях»/«Примерах»
+    in_package = set(mentions(src + "\n" + notes_text, rows, row["id"], empty, aliases))
+    in_package |= {o["id"] for o in rows if label(o, empty) in labels}
+    in_package |= {r["id"] for r, _ in abbreviation_hits(src + "\n" + notes_text, rows, row["id"], empty, aliases)}
+    named = mentions(long + "\n" + short, rows, row["id"], empty, aliases)
+    by_id = {r["id"]: r for r in rows}
+    outside = [rid for rid in named if rid not in in_package
+               and not any(inside_name(by_id[rid], by_id[pid]) for pid in named if pid in in_package)]  # часть названия записи пакета
+    for rid in outside:
+        other = next(r for r in rows if r["id"] == rid)
+        res["h"].append(f"в тексте названа запись «{label(other, empty)}», которой нет в пакете записи (источники и связанные термины)")
     return res
 
 
 def validate(rows, schema, review, aliases=None):
     empty = schema["empty"]
     records = []
+    std_rows = load_std_rows()
     for row in rows:
         if row[LONG] == empty and row[SHORT] == empty and row[FORMULA] == empty:
             continue
-        auto = check_row(row, rows, schema, aliases)
+        auto = check_row(row, rows, schema, aliases, notes_of(row, std_rows))
         entry = review["records"].get(row["id"])
         h = review_hash(row, schema)
         manual = {"a": [], "b": [], "c": []}
