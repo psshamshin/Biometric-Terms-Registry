@@ -5,7 +5,8 @@
 
 Пакет метрики:
   - формулировки всех источников записи;
-  - расшифровки аббревиатур: наименования записей реестра, чьи аббревиатуры (ru или en) стоят в этих формулировках;
+  - расшифровки аббревиатур: наименования записей реестра, чьи аббревиатуры (ru или en) стоят в этих формулировках
+    и в «Примечаниях» и «Примерах» статьи;
   - «Примечания» и «Примеры» этой статьи ГОСТа (по каждому стандарту записи);
   - формулировки ГОСТа записей из «Связанных терминов»;
   - для формулы: справочник формул из схемы (formula) и формулы связанных метрик (парная метрика, дополнение).
@@ -82,9 +83,11 @@ def load_aliases(rows):
     return abbreviation_aliases(rows, load_abbreviations(cfg, OUT_DIR), None)
 
 
-def decoded_abbreviations(row, rows, schema, aliases=None):
-    """Расшифровки: записи реестра, чьё сокращение (ru или en) стоит в формулировках источников этой записи."""
-    text = "\n".join(sources_of(row, schema).values())
+def decoded_abbreviations(row, rows, schema, aliases=None, notes=()):
+    """Расшифровки: записи реестра, чьё сокращение (ru или en) стоит в формулировках источников этой записи
+    или в «Примечаниях» и «Примерах» её статьи (notes — элементы «примечания_и_примеры»)."""
+    text = "\n".join(list(sources_of(row, schema).values())
+                     + [t for n in notes for t in (n.get("примечания"), n.get("примеры")) if t])
     return [{"аббревиатура": abbr, "наименование": r["Наименование ru"], "наименование_en": r.get("Наименование en")}
             for r, abbr in abbreviation_hits(text, rows, row["id"], None, aliases)]
 
@@ -105,7 +108,7 @@ def package(rid, rows, std_rows, schema, aliases=None):
         "область": row["Область (часть ключа)"],
         "флаги": sorted(set(flags)),
         "формулировки_источников": sources_of(row, schema),
-        "расшифровки_аббревиатур": decoded_abbreviations(row, rows, schema, aliases),
+        "расшифровки_аббревиатур": [],
         "примечания_и_примеры": [],
         "связанные": [],
     }
@@ -114,6 +117,8 @@ def package(rid, rows, std_rows, schema, aliases=None):
         if std and (std.get("Примечания") or std.get("Примеры")):
             pkg["примечания_и_примеры"].append(
                 {"стандарт": sid, "пункт": std["Пункт"], "примечания": std.get("Примечания"), "примеры": std.get("Примеры")})
+
+    pkg["расшифровки_аббревиатур"] = decoded_abbreviations(row, rows, schema, aliases, pkg["примечания_и_примеры"])
 
     links = links_of(row, rows)
     wanted = [(r, k) for r, k in links if is_metric or k == USED]

@@ -91,6 +91,22 @@ def test_abbreviation_decoding_in_package():
     assert [x["наименование"] for x in package("fnmr", rows, STD, SCHEMA)["расшифровки_аббревиатур"]] == ["Другой термин"]
 
 
+def test_abbreviation_decoding_from_notes_and_examples():
+    """Аббревиатуры из «Примечаний» и «Примеров» статьи тоже расшифровываются; чужие статьи и примечания других записей — нет."""
+    rows = [dict(r) for r in ROWS]
+    rows[1]["Наименование en"] = "False match rate"
+    rows[3]["Аббревиатура ru"] = "ДТТ"
+    std = {"std": {k: dict(v) for k, v in STD["std"].items()}}
+    key = rows[2]["Ключ"]
+    std["std"][key]["Примечания"] = "Оценивают по FMR."
+    std["std"][key]["Примеры"] = "Например, ДТТ."
+    got = package("false-nm", rows, std, SCHEMA)["расшифровки_аббревиатур"]
+    assert [(x["аббревиатура"], x["наименование"]) for x in got] == [
+        ("FMR", "Ложное совпадение метрика"), ("ДТТ", "Другой термин")]
+    std["std"][key]["Примечания"] = std["std"][key]["Примеры"] = None
+    assert package("false-nm", rows, std, SCHEMA)["расшифровки_аббревиатур"] == []
+
+
 def test_other_records_texts_never_in_package():
     for rid in ("fnmr", "fmr", "false-nm"):
         text = dump(package(rid, ROWS, STD, SCHEMA))
