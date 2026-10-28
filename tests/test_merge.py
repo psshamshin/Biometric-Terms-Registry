@@ -82,8 +82,25 @@ def test_name_conflict_goes_to_synonyms(tmp_path):
                    [row("b", "2", "Частота ложного допуска", "false accept rate", "FAR", synonyms=["ЧЛД"])])
     r = res["rows"][0]
     assert r["Наименование ru"] == "Вероятность ложного допуска"   # первый по priority
-    assert r["Синонимы"] == "ЧЛД, Частота ложного допуска"
+    assert r["Синонимы"] == "ЧЛД, частота ложного допуска"   # первая буква — как в тексте ГОСТа, не заглавная
     assert "name_conflict" in flags(r)
+
+
+def test_name_conflict_synonym_keeps_gost_case(tmp_path):
+    """Синоним из наименования другого ГОСТа: строчная первая буква; аббревиатура в начале не трогается."""
+    from src.merge import as_in_text
+
+    assert as_in_text("Отказ сбора данных") == "отказ сбора данных"
+    assert as_in_text("ДОПО системы") == "ДОПО системы"
+    res, _ = merge(tmp_path, [row("a", "1", "Отказ получения данных", "failure to acquire")],
+                   [row("b", "2", "Отказ сбора данных", "failure to acquire")])
+    assert res["rows"][0]["Синонимы"] == "отказ сбора данных"
+
+
+def test_real_registry_name_conflict_synonym_lowercase():
+    rows = json.loads((Path(__file__).resolve().parent.parent / "data/out/registry.json").read_text(encoding="utf-8"))
+    r = next(x for x in rows if x["id"] == "failure-to-acquire")
+    assert r["Синонимы"] == "отказ сбора данных"
 
 
 def test_type_conflict(tmp_path):
