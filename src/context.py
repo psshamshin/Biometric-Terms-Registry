@@ -5,6 +5,7 @@
 
 Пакет метрики:
   - формулировки всех источников записи;
+  - расшифровки аббревиатур: наименования записей реестра, чьи аббревиатуры (ru или en) стоят в этих формулировках;
   - «Примечания» и «Примеры» этой статьи ГОСТа (по каждому стандарту записи);
   - формулировки ГОСТа записей из «Связанных терминов»;
   - для формулы: справочник формул из схемы (formula) и формулы связанных метрик (парная метрика, дополнение).
@@ -23,6 +24,8 @@ import sys
 from pathlib import Path
 
 import yaml
+
+from src.links import abbreviation_aliases, abbreviation_hits
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = ROOT / "data/out"
@@ -71,7 +74,22 @@ def links_of(row, rows, sep=". "):
     return out
 
 
-def package(rid, rows, std_rows, schema):
+def load_aliases(rows):
+    """Сокращения из разделов «Сокращения» стандартов → {id записи: [сокращения]} (как при сборке объединения)."""
+    from src.merge import load_abbreviations
+
+    cfg = yaml.safe_load((ROOT / "config/merge.yaml").read_text(encoding="utf-8"))
+    return abbreviation_aliases(rows, load_abbreviations(cfg, OUT_DIR), None)
+
+
+def decoded_abbreviations(row, rows, schema, aliases=None):
+    """Расшифровки: записи реестра, чьё сокращение (ru или en) стоит в формулировках источников этой записи."""
+    text = "\n".join(sources_of(row, schema).values())
+    return [{"аббревиатура": abbr, "наименование": r["Наименование ru"], "наименование_en": r.get("Наименование en")}
+            for r, abbr in abbreviation_hits(text, rows, row["id"], None, aliases)]
+
+
+def package(rid, rows, std_rows, schema, aliases=None):
     """Пакет записи rid: словарь, который печатается как YAML. Только данные источников и справочник формул."""
     row = next((r for r in rows if r["id"] == rid), None)
     if row is None:
@@ -87,6 +105,7 @@ def package(rid, rows, std_rows, schema):
         "область": row["Область (часть ключа)"],
         "флаги": sorted(set(flags)),
         "формулировки_источников": sources_of(row, schema),
+        "расшифровки_аббревиатур": decoded_abbreviations(row, rows, schema, aliases),
         "примечания_и_примеры": [],
         "связанные": [],
     }
@@ -118,8 +137,9 @@ def main(argv):
 
     if len(argv) != 1:
         sys.exit("использование: python -m src.context <id>")
+    rows = load_rows()
     try:
-        pkg = package(argv[0], load_rows(), load_std_rows(), load_schema())
+        pkg = package(argv[0], rows, load_std_rows(), load_schema(), load_aliases(rows))
     except KeyError:
         sys.exit(f"нет строки с id «{argv[0]}» в data/out/registry.json; сначала: python run.py")
     print(yaml.safe_dump(pkg, allow_unicode=True, sort_keys=False, width=1000), end="")

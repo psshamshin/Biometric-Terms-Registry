@@ -68,6 +68,28 @@ def test_term_package():
     assert "FNMR" not in text and "метрик" not in pkg["тип"]
 
 
+def test_abbreviation_decoding_in_package():
+    """Расшифровки: записи, чьё сокращение (ru или en, из записи или из раздела «Сокращения») стоит в формулировках источников."""
+    rows = [dict(r) for r in ROWS]
+    rows[0][SRC] = "п. 1 — Доля попыток по FMR и ОАБП, приведших к ЛН, а также FNMRX и fmr."
+    rows[1]["Наименование en"] = "False match rate"
+    rows[3]["Аббревиатура ru"] = "ДТ"
+    rows[4]["Аббревиатура en"] = "MORE"
+    aliases = {"other": ["ОАБП"]}
+    got = package("fnmr", rows, STD, SCHEMA, aliases)["расшифровки_аббревиатур"]
+    assert got == [
+        {"аббревиатура": "FMR", "наименование": "Ложное совпадение метрика", "наименование_en": "False match rate"},
+        {"аббревиатура": "ОАБП", "наименование": "Другой термин", "наименование_en": None}]
+    # сокращение самой записи, слова другого регистра и части более длинных слов не считаются; без совпадений — пустой список
+    assert package("fmr", rows, STD, SCHEMA, aliases)["расшифровки_аббревиатур"] == []
+    # ru-сокращение из самой записи
+    rows[0][SRC] = "п. 1 — Доля попыток по ДТ."
+    assert [x["наименование"] for x in package("fnmr", rows, STD, SCHEMA)["расшифровки_аббревиатур"]] == []  # ДТ короче трёх букв
+    rows[3]["Аббревиатура ru"] = "ДТТ"
+    rows[0][SRC] = "п. 1 — Доля попыток по ДТТ."
+    assert [x["наименование"] for x in package("fnmr", rows, STD, SCHEMA)["расшифровки_аббревиатур"]] == ["Другой термин"]
+
+
 def test_other_records_texts_never_in_package():
     for rid in ("fnmr", "fmr", "false-nm"):
         text = dump(package(rid, ROWS, STD, SCHEMA))
