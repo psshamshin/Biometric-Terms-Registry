@@ -26,7 +26,23 @@ BLOCKS = [
     ("c", "в) Формула сходится с определением"),
     ("d", "г) Нет направления «Ниже/Выше — лучше»"),
     ("e", "д) Записи из источника есть в «Связанных терминах»"),
+    ("g", "е) Аббревиатуры расшифрованы"),
 ]
+ABBR_RE = re.compile(r"(?<![\w-])(?:[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*|[А-ЯЁ][А-ЯЁ0-9]*(?:-[А-ЯЁ0-9]+)*)(?![\w-])")
+KNOWN_ABBR = {"ГОСТ", "ИСО", "МЭК", "ISO", "IEC"}  # обозначения стандартов расшифровки не требуют
+
+
+def undecoded_abbreviations(text, own=()):
+    """Аббревиатуры (2+ заглавных букв подряд), первое упоминание которых не расшифровано рядом:
+    «ABBR (расшифровка)» или «расшифровка (ABBR)». Собственная аббревиатура записи и обозначения стандартов не считаются."""
+    res = []
+    for abbr in dict.fromkeys(m.group() for m in ABBR_RE.finditer(text)):
+        if len(abbr) < 2 or abbr in KNOWN_ABBR or abbr in own:
+            continue
+        m = re.search(r"(?<![\w-])" + re.escape(abbr) + r"(?![\w-])", text)
+        if not (text[m.end():].startswith(" (") or (text[:m.start()].endswith("(") and text[m.end():].startswith(")"))):
+            res.append(abbr)
+    return res
 
 
 def load_review(path=REVIEW_PATH):
@@ -71,6 +87,14 @@ def check_row(row, rows, schema, aliases=None):
         res["f"].append("длинное: счётчики формулы TP/FP/TN/FN в тексте (формул и пояснений к ним в тексте нет)")
     if is_metric and "условн" not in long.lower():
         res["f"].append("длинное: пример не помечен словом «условный»")
+
+    own = {row[c] for c in ("Аббревиатура en", "Аббревиатура ru") if row[c] != empty}
+    for abbr in undecoded_abbreviations(long, own):
+        res["g"].append(f"длинное: аббревиатура {abbr} при первом упоминании не расшифрована (расшифровка — по пакету записи)")
+    for abbr in dict.fromkeys(m.group() for m in ABBR_RE.finditer(short)):
+        if abbr in KNOWN_ABBR or abbr in own:
+            continue
+        res["g"].append(f"короткое: аббревиатура {abbr}; по возможности без аббревиатур")
 
     if LOWER in short or HIGHER in short or LOWER in long or HIGHER in long:
         res["d"].append("в тексте есть «Ниже/Выше — лучше»: направление не указывается")
