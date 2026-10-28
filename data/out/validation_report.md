@@ -8,27 +8,196 @@
 | Тип | Записей | С текстами | Без текстов |
 |---|---|---|---|
 | метрика | 19 | 19 | 0 |
-| термин | 164 | 35 | 129 |
+| термин | 164 | 91 | 73 |
 
 
 ## Итог по блокам (доля записей без замечаний)
 
 | Блок | Метрики | Термины |
 |---|---|---|
-| Формат: объём, слова, формулы и условный пример | 100% (19 из 19) | 100% (35 из 35) |
-| а) Утверждения опираются на источники | 100% (19 из 19) | 100% (35 из 35) |
-| б) Короткое определение не противоречит длинному и источникам | 100% (19 из 19) | 100% (35 из 35) |
-| в) Формула сходится с определением | 100% (19 из 19) | 100% (35 из 35) |
-| г) Нет направления «Ниже/Выше — лучше» | 100% (19 из 19) | 100% (35 из 35) |
-| д) Записи из источника есть в «Связанных терминах» | 100% (19 из 19) | 100% (35 из 35) |
+| Формат: объём, слова, формулы и условный пример | 100% (19 из 19) | 100% (91 из 91) |
+| а) Утверждения опираются на источники | 100% (19 из 19) | 38% (35 из 91) |
+| б) Короткое определение не противоречит длинному и источникам | 100% (19 из 19) | 38% (35 из 91) |
+| в) Формула сходится с определением | 100% (19 из 19) | 38% (35 из 91) |
+| г) Нет направления «Ниже/Выше — лучше» | 100% (19 из 19) | 100% (91 из 91) |
+| д) Записи из источника есть в «Связанных терминах» | 100% (19 из 19) | 100% (91 из 91) |
 
 
-Записей с замечаниями: 0 из 54; замечаний всего: 0.
+Записей с замечаниями: 56 из 110; замечаний всего: 168.
 
 
 ## Список правок
 
-Замечаний нет.
+| Запись | Блок | Замечание |
+|---|---|---|
+| biometric-data-subject | a | ревью нет (хэш d353e4518d4c) |
+| biometric-data-subject | b | ревью нет (хэш d353e4518d4c) |
+| biometric-data-subject | c | ревью нет (хэш d353e4518d4c) |
+| biometric-data | a | ревью нет (хэш d256762342af) |
+| biometric-data | b | ревью нет (хэш d256762342af) |
+| biometric-data | c | ревью нет (хэш d256762342af) |
+| biometric-database | a | ревью нет (хэш f34fc694f65c) |
+| biometric-database | b | ревью нет (хэш f34fc694f65c) |
+| biometric-database | c | ревью нет (хэш f34fc694f65c) |
+| biometric-enrollee | a | ревью нет (хэш c0b39b2e1c0f) |
+| biometric-enrollee | b | ревью нет (хэш c0b39b2e1c0f) |
+| biometric-enrollee | c | ревью нет (хэш c0b39b2e1c0f) |
+| biometric-enrolment-data-record | a | ревью нет (хэш a15ffdeca7bf) |
+| biometric-enrolment-data-record | b | ревью нет (хэш a15ffdeca7bf) |
+| biometric-enrolment-data-record | c | ревью нет (хэш a15ffdeca7bf) |
+| biometric-enrolment-database | a | ревью нет (хэш d8653725b5de) |
+| biometric-enrolment-database | b | ревью нет (хэш d8653725b5de) |
+| biometric-enrolment-database | c | ревью нет (хэш d8653725b5de) |
+| biometric-enrolment | a | ревью нет (хэш c648062fb2a6) |
+| biometric-enrolment | b | ревью нет (хэш c648062fb2a6) |
+| biometric-enrolment | c | ревью нет (хэш c648062fb2a6) |
+| biometric-false-acceptance | a | ревью нет (хэш f9137cf461db) |
+| biometric-false-acceptance | b | ревью нет (хэш f9137cf461db) |
+| biometric-false-acceptance | c | ревью нет (хэш f9137cf461db) |
+| biometric-false-rejection | a | ревью нет (хэш 4e3474fe20e2) |
+| biometric-false-rejection | b | ревью нет (хэш 4e3474fe20e2) |
+| biometric-false-rejection | c | ревью нет (хэш 4e3474fe20e2) |
+| biometric-feature-extraction | a | ревью нет (хэш 61f98c8c3bae) |
+| biometric-feature-extraction | b | ревью нет (хэш 61f98c8c3bae) |
+| biometric-feature-extraction | c | ревью нет (хэш 61f98c8c3bae) |
+| biometric-feature | a | ревью нет (хэш 3ab70c75b2cc) |
+| biometric-feature | b | ревью нет (хэш 3ab70c75b2cc) |
+| biometric-feature | c | ревью нет (хэш 3ab70c75b2cc) |
+| biometric-identification-decision | a | ревью нет (хэш e5234fe07c3c) |
+| biometric-identification-decision | b | ревью нет (хэш e5234fe07c3c) |
+| biometric-identification-decision | c | ревью нет (хэш e5234fe07c3c) |
+| biometric-identification-system | a | ревью нет (хэш f5a08d03fac8) |
+| biometric-identification-system | b | ревью нет (хэш f5a08d03fac8) |
+| biometric-identification-system | c | ревью нет (хэш f5a08d03fac8) |
+| biometric-identification | a | ревью нет (хэш c2d00fa0f3a7) |
+| biometric-identification | b | ревью нет (хэш c2d00fa0f3a7) |
+| biometric-identification | c | ревью нет (хэш c2d00fa0f3a7) |
+| biometric-mated-comparison-trial | a | ревью нет (хэш 94440e631dbc) |
+| biometric-mated-comparison-trial | b | ревью нет (хэш 94440e631dbc) |
+| biometric-mated-comparison-trial | c | ревью нет (хэш 94440e631dbc) |
+| biometric-model | a | ревью нет (хэш d528b56661a1) |
+| biometric-model | b | ревью нет (хэш d528b56661a1) |
+| biometric-model | c | ревью нет (хэш d528b56661a1) |
+| biometric-non-mated-comparison-trial | a | ревью нет (хэш 47707f43f464) |
+| biometric-non-mated-comparison-trial | b | ревью нет (хэш 47707f43f464) |
+| biometric-non-mated-comparison-trial | c | ревью нет (хэш 47707f43f464) |
+| biometric-operational-personnel | a | ревью нет (хэш 24ca30beb4fe) |
+| biometric-operational-personnel | b | ревью нет (хэш 24ca30beb4fe) |
+| biometric-operational-personnel | c | ревью нет (хэш 24ca30beb4fe) |
+| biometric-presentation | a | ревью нет (хэш cc2eeb40a537) |
+| biometric-presentation | b | ревью нет (хэш cc2eeb40a537) |
+| biometric-presentation | c | ревью нет (хэш cc2eeb40a537) |
+| biometric-probe | a | ревью нет (хэш 9fd8129c6011) |
+| biometric-probe | b | ревью нет (хэш 9fd8129c6011) |
+| biometric-probe | c | ревью нет (хэш 9fd8129c6011) |
+| biometric-property | a | ревью нет (хэш 58355c8c927c) |
+| biometric-property | b | ревью нет (хэш 58355c8c927c) |
+| biometric-property | c | ревью нет (хэш 58355c8c927c) |
+| biometric-recognition | a | ревью нет (хэш 3ecfd03fe69c) |
+| biometric-recognition | b | ревью нет (хэш 3ecfd03fe69c) |
+| biometric-recognition | c | ревью нет (хэш 3ecfd03fe69c) |
+| biometric-reference-adaptation | a | ревью нет (хэш 078011ee4832) |
+| biometric-reference-adaptation | b | ревью нет (хэш 078011ee4832) |
+| biometric-reference-adaptation | c | ревью нет (хэш 078011ee4832) |
+| biometric-reference-data-record | a | ревью нет (хэш d53e544cd0b0) |
+| biometric-reference-data-record | b | ревью нет (хэш d53e544cd0b0) |
+| biometric-reference-data-record | c | ревью нет (хэш d53e544cd0b0) |
+| biometric-reference-database | a | ревью нет (хэш 3266289a9894) |
+| biometric-reference-database | b | ревью нет (хэш 3266289a9894) |
+| biometric-reference-database | c | ревью нет (хэш 3266289a9894) |
+| biometric-reference-identifier | a | ревью нет (хэш 4abd4846a748) |
+| biometric-reference-identifier | b | ревью нет (хэш 4abd4846a748) |
+| biometric-reference-identifier | c | ревью нет (хэш 4abd4846a748) |
+| biometric-reference | a | ревью нет (хэш b38ff72b3be3) |
+| biometric-reference | b | ревью нет (хэш b38ff72b3be3) |
+| biometric-reference | c | ревью нет (хэш b38ff72b3be3) |
+| biometric-representation | a | ревью нет (хэш 864fb6c11db0) |
+| biometric-representation | b | ревью нет (хэш 864fb6c11db0) |
+| biometric-representation | c | ревью нет (хэш 864fb6c11db0) |
+| biometric-sample | a | ревью нет (хэш ba09cd8116f9) |
+| biometric-sample | b | ревью нет (хэш ba09cd8116f9) |
+| biometric-sample | c | ревью нет (хэш ba09cd8116f9) |
+| biometric-search | a | ревью нет (хэш 89addd992f9d) |
+| biometric-search | b | ревью нет (хэш 89addd992f9d) |
+| biometric-search | c | ревью нет (хэш 89addd992f9d) |
+| biometric-system-operator | a | ревью нет (хэш 8ecdee4e473d) |
+| biometric-system-operator | b | ревью нет (хэш 8ecdee4e473d) |
+| biometric-system-operator | c | ревью нет (хэш 8ecdee4e473d) |
+| biometric-system-owner | a | ревью нет (хэш bb4e0867bf8d) |
+| biometric-system-owner | b | ревью нет (хэш bb4e0867bf8d) |
+| biometric-system-owner | c | ревью нет (хэш bb4e0867bf8d) |
+| biometric-system | a | ревью нет (хэш fd65e57511ee) |
+| biometric-system | b | ревью нет (хэш fd65e57511ee) |
+| biometric-system | c | ревью нет (хэш fd65e57511ee) |
+| biometric-template | a | ревью нет (хэш 4d46f32ace22) |
+| biometric-template | b | ревью нет (хэш 4d46f32ace22) |
+| biometric-template | c | ревью нет (хэш 4d46f32ace22) |
+| biometric-verification-decision | a | ревью нет (хэш 974b485d3b5d) |
+| biometric-verification-decision | b | ревью нет (хэш 974b485d3b5d) |
+| biometric-verification-decision | c | ревью нет (хэш 974b485d3b5d) |
+| biometric-verification-system | a | ревью нет (хэш b9b4f58753cc) |
+| biometric-verification-system | b | ревью нет (хэш b9b4f58753cc) |
+| biometric-verification-system | c | ревью нет (хэш b9b4f58753cc) |
+| biometric-verification | a | ревью нет (хэш da4224de4b4d) |
+| biometric-verification | b | ревью нет (хэш da4224de4b4d) |
+| biometric-verification | c | ревью нет (хэш da4224de4b4d) |
+| biometric | a | ревью нет (хэш a757890b6747) |
+| biometric | b | ревью нет (хэш a757890b6747) |
+| biometric | c | ревью нет (хэш a757890b6747) |
+| bona-fide-presentation | a | ревью нет (хэш 3556b3721594) |
+| bona-fide-presentation | b | ревью нет (хэш 3556b3721594) |
+| bona-fide-presentation | c | ревью нет (хэш 3556b3721594) |
+| capture-attempt | a | ревью нет (хэш 0f67370d1128) |
+| capture-attempt | b | ревью нет (хэш 0f67370d1128) |
+| capture-attempt | c | ревью нет (хэш 0f67370d1128) |
+| capture-task | a | ревью нет (хэш 8ed14a048b0c) |
+| capture-task | b | ревью нет (хэш 8ed14a048b0c) |
+| capture-task | c | ревью нет (хэш 8ed14a048b0c) |
+| capture-transaction | a | ревью нет (хэш 5163f5e3dfb0) |
+| capture-transaction | b | ревью нет (хэш 5163f5e3dfb0) |
+| capture-transaction | c | ревью нет (хэш 5163f5e3dfb0) |
+| captured-biometric-sample | a | ревью нет (хэш 8c2050bc5234) |
+| captured-biometric-sample | b | ревью нет (хэш 8c2050bc5234) |
+| captured-biometric-sample | c | ревью нет (хэш 8c2050bc5234) |
+| channel-effect | a | ревью нет (хэш 95db7c0e4fd9) |
+| channel-effect | b | ревью нет (хэш 95db7c0e4fd9) |
+| channel-effect | c | ревью нет (хэш 95db7c0e4fd9) |
+| claimant | a | ревью нет (хэш 6829222132b0) |
+| claimant | b | ревью нет (хэш 6829222132b0) |
+| claimant | c | ревью нет (хэш 6829222132b0) |
+| closed-set-test | a | ревью нет (хэш b2aafa5d335b) |
+| closed-set-test | b | ревью нет (хэш b2aafa5d335b) |
+| closed-set-test | c | ревью нет (хэш b2aafa5d335b) |
+| cognizant-presentation | a | ревью нет (хэш c764ba6d6fc3) |
+| cognizant-presentation | b | ревью нет (хэш c764ba6d6fc3) |
+| cognizant-presentation | c | ревью нет (хэш c764ba6d6fc3) |
+| comparison-decision | a | ревью нет (хэш aba13c978a3a) |
+| comparison-decision | b | ревью нет (хэш aba13c978a3a) |
+| comparison-decision | c | ревью нет (хэш aba13c978a3a) |
+| comparison-score | a | ревью нет (хэш 0a534d0492e1) |
+| comparison-score | b | ревью нет (хэш 0a534d0492e1) |
+| comparison-score | c | ревью нет (хэш 0a534d0492e1) |
+| comparison-trial | a | ревью нет (хэш 54e104604ebb) |
+| comparison-trial | b | ревью нет (хэш 54e104604ebb) |
+| comparison-trial | c | ревью нет (хэш 54e104604ebb) |
+| comparison | a | ревью нет (хэш 24d45d183d0e) |
+| comparison | b | ревью нет (хэш 24d45d183d0e) |
+| comparison | c | ревью нет (хэш 24d45d183d0e) |
+| computational-workload | a | ревью нет (хэш cb1df0f7b408) |
+| computational-workload | b | ревью нет (хэш cb1df0f7b408) |
+| computational-workload | c | ревью нет (хэш cb1df0f7b408) |
+| conformant-capture-attempt | a | ревью нет (хэш febb27c79e44) |
+| conformant-capture-attempt | b | ревью нет (хэш febb27c79e44) |
+| conformant-capture-attempt | c | ревью нет (хэш febb27c79e44) |
+| cooperative-biometric-capture-subject | a | ревью нет (хэш 2034de0175ae) |
+| cooperative-biometric-capture-subject | b | ревью нет (хэш 2034de0175ae) |
+| cooperative-biometric-capture-subject | c | ревью нет (хэш 2034de0175ae) |
+| cooperative-presentation | a | ревью нет (хэш 21ecd588e228) |
+| cooperative-presentation | b | ревью нет (хэш 21ecd588e228) |
+| cooperative-presentation | c | ревью нет (хэш 21ecd588e228) |
+| cumulative-match-characteristic-plot | a | ревью нет (хэш 62ce79023ccc) |
+| cumulative-match-characteristic-plot | b | ревью нет (хэш 62ce79023ccc) |
+| cumulative-match-characteristic-plot | c | ревью нет (хэш 62ce79023ccc) |
 
 
 ## По записям
@@ -89,6 +258,62 @@
 | biometric-characteristics-examiner | термин | проверено | + | + | + | + | + | + |
 | biometric-claim | термин | проверено | + | + | + | + | + | + |
 | biometric-data-record | термин | проверено | + | + | + | + | + | + |
+| biometric-data-subject | термин | ревью нет (хэш d353e4518d4c) | + | − | − | − | + | + |
+| biometric-data | термин | ревью нет (хэш d256762342af) | + | − | − | − | + | + |
+| biometric-database | термин | ревью нет (хэш f34fc694f65c) | + | − | − | − | + | + |
+| biometric-enrollee | термин | ревью нет (хэш c0b39b2e1c0f) | + | − | − | − | + | + |
+| biometric-enrolment-data-record | термин | ревью нет (хэш a15ffdeca7bf) | + | − | − | − | + | + |
+| biometric-enrolment-database | термин | ревью нет (хэш d8653725b5de) | + | − | − | − | + | + |
+| biometric-enrolment | термин | ревью нет (хэш c648062fb2a6) | + | − | − | − | + | + |
+| biometric-false-acceptance | термин | ревью нет (хэш f9137cf461db) | + | − | − | − | + | + |
+| biometric-false-rejection | термин | ревью нет (хэш 4e3474fe20e2) | + | − | − | − | + | + |
+| biometric-feature-extraction | термин | ревью нет (хэш 61f98c8c3bae) | + | − | − | − | + | + |
+| biometric-feature | термин | ревью нет (хэш 3ab70c75b2cc) | + | − | − | − | + | + |
+| biometric-identification-decision | термин | ревью нет (хэш e5234fe07c3c) | + | − | − | − | + | + |
+| biometric-identification-system | термин | ревью нет (хэш f5a08d03fac8) | + | − | − | − | + | + |
+| biometric-identification | термин | ревью нет (хэш c2d00fa0f3a7) | + | − | − | − | + | + |
+| biometric-mated-comparison-trial | термин | ревью нет (хэш 94440e631dbc) | + | − | − | − | + | + |
+| biometric-model | термин | ревью нет (хэш d528b56661a1) | + | − | − | − | + | + |
+| biometric-non-mated-comparison-trial | термин | ревью нет (хэш 47707f43f464) | + | − | − | − | + | + |
+| biometric-operational-personnel | термин | ревью нет (хэш 24ca30beb4fe) | + | − | − | − | + | + |
+| biometric-presentation | термин | ревью нет (хэш cc2eeb40a537) | + | − | − | − | + | + |
+| biometric-probe | термин | ревью нет (хэш 9fd8129c6011) | + | − | − | − | + | + |
+| biometric-property | термин | ревью нет (хэш 58355c8c927c) | + | − | − | − | + | + |
+| biometric-recognition | термин | ревью нет (хэш 3ecfd03fe69c) | + | − | − | − | + | + |
+| biometric-reference-adaptation | термин | ревью нет (хэш 078011ee4832) | + | − | − | − | + | + |
+| biometric-reference-data-record | термин | ревью нет (хэш d53e544cd0b0) | + | − | − | − | + | + |
+| biometric-reference-database | термин | ревью нет (хэш 3266289a9894) | + | − | − | − | + | + |
+| biometric-reference-identifier | термин | ревью нет (хэш 4abd4846a748) | + | − | − | − | + | + |
+| biometric-reference | термин | ревью нет (хэш b38ff72b3be3) | + | − | − | − | + | + |
+| biometric-representation | термин | ревью нет (хэш 864fb6c11db0) | + | − | − | − | + | + |
+| biometric-sample | термин | ревью нет (хэш ba09cd8116f9) | + | − | − | − | + | + |
+| biometric-search | термин | ревью нет (хэш 89addd992f9d) | + | − | − | − | + | + |
+| biometric-system-operator | термин | ревью нет (хэш 8ecdee4e473d) | + | − | − | − | + | + |
+| biometric-system-owner | термин | ревью нет (хэш bb4e0867bf8d) | + | − | − | − | + | + |
+| biometric-system | термин | ревью нет (хэш fd65e57511ee) | + | − | − | − | + | + |
+| biometric-template | термин | ревью нет (хэш 4d46f32ace22) | + | − | − | − | + | + |
+| biometric-verification-decision | термин | ревью нет (хэш 974b485d3b5d) | + | − | − | − | + | + |
+| biometric-verification-system | термин | ревью нет (хэш b9b4f58753cc) | + | − | − | − | + | + |
+| biometric-verification | термин | ревью нет (хэш da4224de4b4d) | + | − | − | − | + | + |
+| biometric | термин | ревью нет (хэш a757890b6747) | + | − | − | − | + | + |
+| bona-fide-presentation | термин | ревью нет (хэш 3556b3721594) | + | − | − | − | + | + |
+| capture-attempt | термин | ревью нет (хэш 0f67370d1128) | + | − | − | − | + | + |
+| capture-task | термин | ревью нет (хэш 8ed14a048b0c) | + | − | − | − | + | + |
+| capture-transaction | термин | ревью нет (хэш 5163f5e3dfb0) | + | − | − | − | + | + |
+| captured-biometric-sample | термин | ревью нет (хэш 8c2050bc5234) | + | − | − | − | + | + |
+| channel-effect | термин | ревью нет (хэш 95db7c0e4fd9) | + | − | − | − | + | + |
+| claimant | термин | ревью нет (хэш 6829222132b0) | + | − | − | − | + | + |
+| closed-set-test | термин | ревью нет (хэш b2aafa5d335b) | + | − | − | − | + | + |
+| cognizant-presentation | термин | ревью нет (хэш c764ba6d6fc3) | + | − | − | − | + | + |
+| comparison-decision | термин | ревью нет (хэш aba13c978a3a) | + | − | − | − | + | + |
+| comparison-score | термин | ревью нет (хэш 0a534d0492e1) | + | − | − | − | + | + |
+| comparison-trial | термин | ревью нет (хэш 54e104604ebb) | + | − | − | − | + | + |
+| comparison | термин | ревью нет (хэш 24d45d183d0e) | + | − | − | − | + | + |
+| computational-workload | термин | ревью нет (хэш cb1df0f7b408) | + | − | − | − | + | + |
+| conformant-capture-attempt | термин | ревью нет (хэш febb27c79e44) | + | − | − | − | + | + |
+| cooperative-biometric-capture-subject | термин | ревью нет (хэш 2034de0175ae) | + | − | − | − | + | + |
+| cooperative-presentation | термин | ревью нет (хэш 21ecd588e228) | + | − | − | − | + | + |
+| cumulative-match-characteristic-plot | термин | ревью нет (хэш 62ce79023ccc) | + | − | − | − | + | + |
 
 
 ## История проверки
