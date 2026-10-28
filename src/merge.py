@@ -122,6 +122,13 @@ def source_text(values, empty):
     return "; ".join(values)
 
 
+def as_in_text(name):
+    """Наименование ru другого стандарта, ставшее синонимом: первая буква — как в тексте ГОСТа, а не заглавная.
+    Парсер всегда делает первую букву наименования заглавной (запись в журнале очистки «первая буква заглавная»;
+    в подключённых стандартах — все статьи), поэтому строчной её возвращаем; аббревиатура в начале («ДОПО …») остаётся как есть."""
+    return name if name[1:2].isupper() else name[:1].lower() + name[1:]
+
+
 def _split(value, sep, empty):
     return [] if _empty(value, empty) else value.split(sep)
 
@@ -148,7 +155,7 @@ def merge_group(group, schema, merge_cfg, conflict_flags):
         row[col] = values[0][1] if values else empty
         for sid, v in values[1:]:
             if not same(row[col], v):
-                extra_synonyms.append(v)
+                extra_synonyms.append(as_in_text(v) if col == "Наименование ru" else v)
                 flags.append("name_conflict")
                 reasons.setdefault("name_conflict", []).append(f"{col}: «{row[col]}» / {sid}: «{v}»")
 
