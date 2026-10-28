@@ -8,22 +8,22 @@
 | Тип | Записей | С текстами | Без текстов |
 |---|---|---|---|
 | метрика | 19 | 19 | 0 |
-| термин | 164 | 91 | 73 |
+| термин | 164 | 115 | 49 |
 
 
 ## Итог по блокам (доля записей без замечаний)
 
 | Блок | Метрики | Термины |
 |---|---|---|
-| Формат: объём, слова, формулы и условный пример | 100% (19 из 19) | 100% (91 из 91) |
-| а) Утверждения опираются на источники | 100% (19 из 19) | 38% (35 из 91) |
-| б) Короткое определение не противоречит длинному и источникам | 100% (19 из 19) | 38% (35 из 91) |
-| в) Формула сходится с определением | 100% (19 из 19) | 38% (35 из 91) |
-| г) Нет направления «Ниже/Выше — лучше» | 100% (19 из 19) | 100% (91 из 91) |
-| д) Записи из источника есть в «Связанных терминах» | 100% (19 из 19) | 100% (91 из 91) |
+| Формат: объём, слова, формулы и условный пример | 100% (19 из 19) | 100% (115 из 115) |
+| а) Утверждения опираются на источники | 100% (19 из 19) | 30% (35 из 115) |
+| б) Короткое определение не противоречит длинному и источникам | 100% (19 из 19) | 30% (35 из 115) |
+| в) Формула сходится с определением | 100% (19 из 19) | 30% (35 из 115) |
+| г) Нет направления «Ниже/Выше — лучше» | 100% (19 из 19) | 100% (115 из 115) |
+| д) Записи из источника есть в «Связанных терминах» | 100% (19 из 19) | 100% (115 из 115) |
 
 
-Записей с замечаниями: 56 из 110; замечаний всего: 168.
+Записей с замечаниями: 80 из 134; замечаний всего: 240.
 
 
 ## Список правок
@@ -198,6 +198,78 @@
 | cumulative-match-characteristic-plot | a | ревью нет (хэш 62ce79023ccc) |
 | cumulative-match-characteristic-plot | b | ревью нет (хэш 62ce79023ccc) |
 | cumulative-match-characteristic-plot | c | ревью нет (хэш 62ce79023ccc) |
+| dissimilarity-score | a | ревью нет (хэш 9049f2feb248) |
+| dissimilarity-score | b | ревью нет (хэш 9049f2feb248) |
+| dissimilarity-score | c | ревью нет (хэш 9049f2feb248) |
+| duplicate-biometric-enrolment-check | a | ревью нет (хэш 527cf1320e30) |
+| duplicate-biometric-enrolment-check | b | ревью нет (хэш 527cf1320e30) |
+| duplicate-biometric-enrolment-check | c | ревью нет (хэш 527cf1320e30) |
+| enrol | a | ревью нет (хэш c8b4084fda4c) |
+| enrol | b | ревью нет (хэш c8b4084fda4c) |
+| enrol | c | ревью нет (хэш c8b4084fda4c) |
+| enrolment-attempt | a | ревью нет (хэш fd5f29bba771) |
+| enrolment-attempt | b | ревью нет (хэш fd5f29bba771) |
+| enrolment-attempt | c | ревью нет (хэш fd5f29bba771) |
+| enrolment-transaction | a | ревью нет (хэш 689e2e4780bf) |
+| enrolment-transaction | b | ревью нет (хэш 689e2e4780bf) |
+| enrolment-transaction | c | ревью нет (хэш 689e2e4780bf) |
+| experimenter | a | ревью нет (хэш 490c287e9134) |
+| experimenter | b | ревью нет (хэш 490c287e9134) |
+| experimenter | c | ревью нет (хэш 490c287e9134) |
+| failure-to-acquire | a | ревью нет (хэш c040910ee068) |
+| failure-to-acquire | b | ревью нет (хэш c040910ee068) |
+| failure-to-acquire | c | ревью нет (хэш c040910ee068) |
+| failure-to-capture | a | ревью нет (хэш 002a7fcf054b) |
+| failure-to-capture | b | ревью нет (хэш 002a7fcf054b) |
+| failure-to-capture | c | ревью нет (хэш 002a7fcf054b) |
+| failure-to-enrol | a | ревью нет (хэш 89ac2e628745) |
+| failure-to-enrol | b | ревью нет (хэш 89ac2e628745) |
+| failure-to-enrol | c | ревью нет (хэш 89ac2e628745) |
+| false-match | a | ревью нет (хэш ca59f9a4f0d6) |
+| false-match | b | ревью нет (хэш ca59f9a4f0d6) |
+| false-match | c | ревью нет (хэш ca59f9a4f0d6) |
+| false-non-match | a | ревью нет (хэш b0a067521091) |
+| false-non-match | b | ревью нет (хэш b0a067521091) |
+| false-non-match | c | ревью нет (хэш b0a067521091) |
+| filter | a | ревью нет (хэш 18eddf5e89a7) |
+| filter | b | ревью нет (хэш 18eddf5e89a7) |
+| filter | c | ревью нет (хэш 18eddf5e89a7) |
+| fraudulent-biometric-enrolment-data | a | ревью нет (хэш 4c004dee450c) |
+| fraudulent-biometric-enrolment-data | b | ревью нет (хэш 4c004dee450c) |
+| fraudulent-biometric-enrolment-data | c | ревью нет (хэш 4c004dee450c) |
+| full-biometric-system | a | ревью нет (хэш 48af29c2245e) |
+| full-biometric-system | b | ревью нет (хэш 48af29c2245e) |
+| full-biometric-system | c | ревью нет (хэш 48af29c2245e) |
+| identification-transaction | a | ревью нет (хэш b00f2b181f17) |
+| identification-transaction | b | ревью нет (хэш b00f2b181f17) |
+| identification-transaction | c | ревью нет (хэш b00f2b181f17) |
+| identify | a | ревью нет (хэш f143b3732a57) |
+| identify | b | ревью нет (хэш f143b3732a57) |
+| identify | c | ревью нет (хэш f143b3732a57) |
+| identity-concealer | a | ревью нет (хэш bac7f904522d) |
+| identity-concealer | b | ревью нет (хэш bac7f904522d) |
+| identity-concealer | c | ревью нет (хэш bac7f904522d) |
+| impostor | a | ревью нет (хэш 3079552b63e6) |
+| impostor | b | ревью нет (хэш 3079552b63e6) |
+| impostor | c | ревью нет (хэш 3079552b63e6) |
+| indifferent-biometric-capture-subject | a | ревью нет (хэш 6c72d44e739d) |
+| indifferent-biometric-capture-subject | b | ревью нет (хэш 6c72d44e739d) |
+| indifferent-biometric-capture-subject | c | ревью нет (хэш 6c72d44e739d) |
+| indifferent-presentation | a | ревью нет (хэш 0a9230f71504) |
+| indifferent-presentation | b | ревью нет (хэш 0a9230f71504) |
+| indifferent-presentation | c | ревью нет (хэш 0a9230f71504) |
+| intermediate-biometric-sample-processing | a | ревью нет (хэш 8d6bf753c5cc) |
+| intermediate-biometric-sample-processing | b | ревью нет (хэш 8d6bf753c5cc) |
+| intermediate-biometric-sample-processing | c | ревью нет (хэш 8d6bf753c5cc) |
+| intermediate-biometric-sample | a | ревью нет (хэш 711d25d63197) |
+| intermediate-biometric-sample | b | ревью нет (хэш 711d25d63197) |
+| intermediate-biometric-sample | c | ревью нет (хэш 711d25d63197) |
+| liveness-detection | a | ревью нет (хэш 126947ef5a88) |
+| liveness-detection | b | ревью нет (хэш 126947ef5a88) |
+| liveness-detection | c | ревью нет (хэш 126947ef5a88) |
+| liveness | a | ревью нет (хэш c2a48cfa14bd) |
+| liveness | b | ревью нет (хэш c2a48cfa14bd) |
+| liveness | c | ревью нет (хэш c2a48cfa14bd) |
 
 
 ## По записям
@@ -314,6 +386,30 @@
 | cooperative-biometric-capture-subject | термин | ревью нет (хэш 2034de0175ae) | + | − | − | − | + | + |
 | cooperative-presentation | термин | ревью нет (хэш 21ecd588e228) | + | − | − | − | + | + |
 | cumulative-match-characteristic-plot | термин | ревью нет (хэш 62ce79023ccc) | + | − | − | − | + | + |
+| dissimilarity-score | термин | ревью нет (хэш 9049f2feb248) | + | − | − | − | + | + |
+| duplicate-biometric-enrolment-check | термин | ревью нет (хэш 527cf1320e30) | + | − | − | − | + | + |
+| enrol | термин | ревью нет (хэш c8b4084fda4c) | + | − | − | − | + | + |
+| enrolment-attempt | термин | ревью нет (хэш fd5f29bba771) | + | − | − | − | + | + |
+| enrolment-transaction | термин | ревью нет (хэш 689e2e4780bf) | + | − | − | − | + | + |
+| experimenter | термин | ревью нет (хэш 490c287e9134) | + | − | − | − | + | + |
+| failure-to-acquire | термин | ревью нет (хэш c040910ee068) | + | − | − | − | + | + |
+| failure-to-capture | термин | ревью нет (хэш 002a7fcf054b) | + | − | − | − | + | + |
+| failure-to-enrol | термин | ревью нет (хэш 89ac2e628745) | + | − | − | − | + | + |
+| false-match | термин | ревью нет (хэш ca59f9a4f0d6) | + | − | − | − | + | + |
+| false-non-match | термин | ревью нет (хэш b0a067521091) | + | − | − | − | + | + |
+| filter | термин | ревью нет (хэш 18eddf5e89a7) | + | − | − | − | + | + |
+| fraudulent-biometric-enrolment-data | термин | ревью нет (хэш 4c004dee450c) | + | − | − | − | + | + |
+| full-biometric-system | термин | ревью нет (хэш 48af29c2245e) | + | − | − | − | + | + |
+| identification-transaction | термин | ревью нет (хэш b00f2b181f17) | + | − | − | − | + | + |
+| identify | термин | ревью нет (хэш f143b3732a57) | + | − | − | − | + | + |
+| identity-concealer | термин | ревью нет (хэш bac7f904522d) | + | − | − | − | + | + |
+| impostor | термин | ревью нет (хэш 3079552b63e6) | + | − | − | − | + | + |
+| indifferent-biometric-capture-subject | термин | ревью нет (хэш 6c72d44e739d) | + | − | − | − | + | + |
+| indifferent-presentation | термин | ревью нет (хэш 0a9230f71504) | + | − | − | − | + | + |
+| intermediate-biometric-sample-processing | термин | ревью нет (хэш 8d6bf753c5cc) | + | − | − | − | + | + |
+| intermediate-biometric-sample | термин | ревью нет (хэш 711d25d63197) | + | − | − | − | + | + |
+| liveness-detection | термин | ревью нет (хэш 126947ef5a88) | + | − | − | − | + | + |
+| liveness | термин | ревью нет (хэш c2a48cfa14bd) | + | − | − | − | + | + |
 
 
 ## История проверки

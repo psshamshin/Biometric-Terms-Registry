@@ -47,7 +47,16 @@
 
 ## Слой curated (data/curated/)
 
-Файлов: 110; применено: 110; llm_stale: 0; curated_orphan: 0; ошибок в файлах: 0.
+Файлов: 134; применено: 134; llm_stale: 0; curated_orphan: 0; ошибок в файлах: 3.
+
+
+Ошибки в curated-файлах:
+
+| Файл | Поле | Проблема |
+|---|---|---|
+| failure-to-acquire.yaml | флаги | флаг «name_conflict» не из списка curated.flags |
+| filter.yaml | флаги | флаг «synonym_clash» не из списка curated.flags |
+| fraudulent-biometric-enrolment-data.yaml | флаги | флаг «id_truncated» не из списка curated.flags |
 
 
 ## Метрики общего реестра
