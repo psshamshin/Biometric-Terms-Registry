@@ -10,37 +10,38 @@ history:
   - "2026-10-26, задача #34 (проверка Kimi K5): до правок — формат, а, б, в, г, д по 100% (19 из 19); после правок текстов ревью устарело у 6 записей (68%, 13 из 19) до повторной ручной проверки, после неё — все блоки 100% (19 из 19)"
   - "Исправлено в #34: CAPNMR и CAPNIR — формула TN / (FP + TN) = TNR = 1 − FPR, флаг formula_na снят, фраза «для укрывателя несовпадение означает успех атаки» (п. 3.2.7, 3.2.9 ГОСТ Р 58624.3-2019); IAPIR — «идентификатора биометрического контрольного шаблона» (п. 3.2.8); BPCER короткое — «подлинное предъявление» (п. 3.2.2); FPIR короткое и длинное — «возвращается идентификатор» при незарегистрированном субъекте (п. 3.23 ГОСТ Р 71414.1-2024); APNRR короткое — «предъявление артефакта» (п. 3.2.3). Подстановка чисел: CAPNMR 6 из 100 → TN=6, FP=94, 6/(94+6)=6%; CAPNIR 5 из 100 → 5/(95+5)=5%. Остальные 13 записей проверены на «живой человек» и неточное описание возвращаемого/совпадающего — замечаний нет"
   - "2026-10-28, задача #38 (остальные 129 терминов): ревью а/б по пакетам записей; исправлено до записи хэшей — убраны утверждения без опоры в пакете (противопоставления соседним записям, которых нет в пакете: ложный допуск ↔ ложный недопуск, самозванец ↔ укрыватель, «один ко многим» ↔ «один к одному», режим реального времени ↔ отложенного задания, оператор ↔ владелец, совпадение ↔ несовпадение, кооперативный ↔ некооперативный; выводы о назначении алгоритма предварительного отбора, об организации испытаний и целевой выборке) и флаги парсера, ошибочно скопированные в curated (id_truncated, name_conflict, synonym_clash)"
+  - "2026-10-28, задача #40 (расшифровка аббревиатур): новый блок е (нерасшифрованные аббревиатуры) — до правок 28 замечаний в 21 записи (27 — в длинных определениях, 1 — ИАБП в коротком у presentation-attack-instrument-source), после — 0. Расшифровки взяты из наименований пакета записи (расшифровки_аббревиатур, наименование связанной записи); других утверждений в текстах не добавлено, ревью а/б/в по этим записям повторено: замечаний нет"
 records:
-  apar: {hash: 693f3387c6fd, a: [], b: [], c: []}
-  apcer: {hash: 7a33b38026d7, a: [], b: [], c: []}
-  apnrr: {hash: cf218f3a24e6, a: [], b: [], c: []}
-  bpcer: {hash: 932c651889d3, a: [], b: [], c: []}
-  bpnrr: {hash: e15c8e57d67d, a: [], b: [], c: []}
-  capnir: {hash: 75e231d79a41, a: [], b: [], c: []}
-  capnmr: {hash: 1ca10d506d7d, a: [], b: [], c: []}
-  far: {hash: b48910592fee, a: [], b: [], c: []}
-  fmr: {hash: 03f62851050d, a: [], b: [], c: []}
-  fnir: {hash: fda017446ace, a: [], b: [], c: []}
-  fnmr: {hash: cb641601f664, a: [], b: [], c: []}
-  fpir: {hash: 11531d05eb57, a: [], b: [], c: []}
-  frr: {hash: 2de95cabe642, a: [], b: [], c: []}
-  fta: {hash: 92b700b9658f, a: [], b: [], c: []}
-  fte: {hash: dfd3b4465e4c, a: [], b: [], c: []}
+  apar: {hash: 02f792fbda9f, a: [], b: [], c: []}
+  apcer: {hash: 8aa060eefae3, a: [], b: [], c: []}
+  apnrr: {hash: de64d5ff5223, a: [], b: [], c: []}
+  bpcer: {hash: a82b8639860b, a: [], b: [], c: []}
+  bpnrr: {hash: b3a94ac7f782, a: [], b: [], c: []}
+  capnir: {hash: 7be4d31149b8, a: [], b: [], c: []}
+  capnmr: {hash: dac0fcb823be, a: [], b: [], c: []}
+  far: {hash: 7396b3fc5bf0, a: [], b: [], c: []}
+  fmr: {hash: adfee8e94f46, a: [], b: [], c: []}
+  fnir: {hash: 98f530d925bd, a: [], b: [], c: []}
+  fnmr: {hash: 849dd73bc8e8, a: [], b: [], c: []}
+  fpir: {hash: 4272805df9ce, a: [], b: [], c: []}
+  frr: {hash: 3e80f7431dab, a: [], b: [], c: []}
+  fta: {hash: 9ef43a9eec0f, a: [], b: [], c: []}
+  fte: {hash: dfefcad20b34, a: [], b: [], c: []}
   iapar: {hash: edc96f608fae, a: [], b: [], c: []}
-  iapir: {hash: 77bf915bf549, a: [], b: [], c: []}
-  iapmr: {hash: 28367fc7cc30, a: [], b: [], c: []}
-  tpir: {hash: e2bc17875210, a: [], b: [], c: []}
+  iapir: {hash: 6009fe0868f5, a: [], b: [], c: []}
+  iapmr: {hash: 7d634f423f6e, a: [], b: [], c: []}
+  tpir: {hash: 763ee483df9a, a: [], b: [], c: []}
   dcs-pd: {hash: f3af2fa9890f, a: [], b: [], c: []}
   det: {hash: dc5dbda2866b, a: [], b: [], c: []}
   fs-pd: {hash: 603ef5699541, a: [], b: [], c: []}
-  iut: {hash: 118abd395948, a: [], b: [], c: []}
+  iut: {hash: 443606ee0ac7, a: [], b: [], c: []}
   pad: {hash: 5331c8318542, a: [], b: [], c: []}
   pai-series: {hash: d0a90b1b9881, a: [], b: [], c: []}
   pai-species: {hash: 2e15db5583e5, a: [], b: [], c: []}
   pai: {hash: b0db0899bbc6, a: [], b: [], c: []}
   ps-pd: {hash: 48d1b177c8a1, a: [], b: [], c: []}
   sel: {hash: 25fb8cd6922d, a: [], b: [], c: []}
-  toe: {hash: 311d411d5607, a: [], b: [], c: []}
+  toe: {hash: db2d2c9a208e, a: [], b: [], c: []}
   acceptable-biometric-capture-attempt: {hash: 5f5efdee7822, a: [], b: [], c: []}
   acquire: {hash: eacfda23eef5, a: [], b: [], c: []}
   anonymized-biometric-data-record: {hash: 5766273250c0, a: [], b: [], c: []}
@@ -102,7 +103,7 @@ records:
   biometric-verification-decision: {hash: 974b485d3b5d, a: [], b: [], c: []}
   biometric-verification-system: {hash: 840e5e43aebd, a: [], b: [], c: []}
   biometric-verification: {hash: da4224de4b4d, a: [], b: [], c: []}
-  biometric: {hash: 1302ba335b58, a: [], b: [], c: []}
+  biometric: {hash: c7c6b099f166, a: [], b: [], c: []}
   bona-fide-presentation: {hash: 3556b3721594, a: [], b: [], c: []}
   capture-attempt: {hash: 0f67370d1128, a: [], b: [], c: []}
   capture-task: {hash: 8ed14a048b0c, a: [], b: [], c: []}
@@ -168,7 +169,7 @@ records:
   pre-selection-error: {hash: 8655a38c3c94, a: [], b: [], c: []}
   presentation-attack-instrument-creator: {hash: 0553f6b62b90, a: [], b: [], c: []}
   presentation-attack-instrument-presenter: {hash: 87fe8ec96fcc, a: [], b: [], c: []}
-  presentation-attack-instrument-source: {hash: 53b97b8639cd, a: [], b: [], c: []}
+  presentation-attack-instrument-source: {hash: 3eaa72852098, a: [], b: [], c: []}
   presentation-attack: {hash: c70349533cd4, a: [], b: [], c: []}
   presentation-effect: {hash: 98bf1b9f3fd0, a: [], b: [], c: []}
   rank: {hash: a62dd1192526, a: [], b: [], c: []}

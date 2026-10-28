@@ -82,6 +82,20 @@ def _abbreviations(r, aliases, empty):
     return [a for a in own + list((aliases or {}).get(r["id"], [])) if len(a) >= 3]
 
 
+def abbreviation_hits(text, rows, self_id, empty, aliases=None):
+    """[(запись, сокращение)] — записи реестра, чьё сокращение (ru или en, в том числе из раздела «Сокращения»)
+    стоит в тексте целым словом с тем же регистром. Порядок — как в rows; на запись одно сокращение."""
+    words = set(re.findall(r"[A-Za-zА-Яа-яЁё0-9\-]+", text))
+    hits = []
+    for r in rows:
+        if r["id"] == self_id:
+            continue
+        found = next((a for a in _abbreviations(r, aliases, empty) if a in words), None)
+        if found:
+            hits.append((r, found))
+    return hits
+
+
 def mentions(text, rows, self_id, empty, aliases=None):
     """Записи реестра, чьё наименование, синоним или сокращение встречается в тексте источника.
     Слова сравниваются по словоформам (падежи, число); совпадения внутри более длинных отбрасываются;

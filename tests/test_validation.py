@@ -60,6 +60,26 @@ def test_term_rules():
     assert res["c"] and res["d"] and res["f"]
 
 
+def test_undecoded_abbreviations():
+    f = v.undecoded_abbreviations
+    assert f("Считается как FMR и ИАБП.", ()) == ["FMR", "ИАБП"]
+    assert f("Парная метрика — вероятность ложного совпадения (FMR). Инструмент атаки (ИАБП) и снова ИАБП.", ()) == []
+    assert f("FMR (вероятность ложного совпадения) считается иначе; потом FMR.", ()) == []
+    assert f("Сначала FMR, потом FMR (вероятность ложного совпадения).", ()) == ["FMR"]  # расшифровка не при первом упоминании
+    assert f("По ГОСТ Р и ISO/IEC 19795-1: XYZ = 2%.", {"XYZ"}) == []  # стандарты и собственная аббревиатура
+    assert f("Обычные слова и Заглавные тоже не аббревиатуры.", ()) == []
+
+
+def test_abbreviations_block():
+    long = LONG + " Парная метрика — FMR."
+    r = row(**{v.LONG: long, v.SHORT: "Как часто для ИАБП", "Формула *": E, "Флаги": "formula_na"})
+    res = v.check_row(r, [r], SCHEMA)["g"]
+    assert len(res) == 2 and "FMR" in res[0] and "ИАБП" in res[1]
+    r = row(**{v.LONG: LONG + " Парная метрика — вероятность ложного совпадения (FMR). Своя XYZ.", v.SHORT: "Как часто",
+               "Формула *": E, "Флаги": "formula_na"})
+    assert v.check_row(r, [r], SCHEMA)["g"] == []
+
+
 def test_mentions_and_related():
     other = row(id="fm", **{"Наименование ru": "Ложное совпадение", "Аббревиатура en": E})
     src = "Доля попыток, приведших к ложному совпадению."
