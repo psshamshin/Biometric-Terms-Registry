@@ -11,25 +11,26 @@ history:
   - "Исправлено в #34: CAPNMR и CAPNIR — формула TN / (FP + TN) = TNR = 1 − FPR, флаг formula_na снят, фраза «для укрывателя несовпадение означает успех атаки» (п. 3.2.7, 3.2.9 ГОСТ Р 58624.3-2019); IAPIR — «идентификатора биометрического контрольного шаблона» (п. 3.2.8); BPCER короткое — «подлинное предъявление» (п. 3.2.2); FPIR короткое и длинное — «возвращается идентификатор» при незарегистрированном субъекте (п. 3.23 ГОСТ Р 71414.1-2024); APNRR короткое — «предъявление артефакта» (п. 3.2.3). Подстановка чисел: CAPNMR 6 из 100 → TN=6, FP=94, 6/(94+6)=6%; CAPNIR 5 из 100 → 5/(95+5)=5%. Остальные 13 записей проверены на «живой человек» и неточное описание возвращаемого/совпадающего — замечаний нет"
   - "2026-10-28, задача #38 (остальные 129 терминов): ревью а/б по пакетам записей; исправлено до записи хэшей — убраны утверждения без опоры в пакете (противопоставления соседним записям, которых нет в пакете: ложный допуск ↔ ложный недопуск, самозванец ↔ укрыватель, «один ко многим» ↔ «один к одному», режим реального времени ↔ отложенного задания, оператор ↔ владелец, совпадение ↔ несовпадение, кооперативный ↔ некооперативный; выводы о назначении алгоритма предварительного отбора, об организации испытаний и целевой выборке) и флаги парсера, ошибочно скопированные в curated (id_truncated, name_conflict, synonym_clash)"
   - "2026-10-28, задача #40 (расшифровка аббревиатур): новый блок е (нерасшифрованные аббревиатуры) — до правок 28 замечаний в 21 записи (27 — в длинных определениях, 1 — ИАБП в коротком у presentation-attack-instrument-source), после — 0. Расшифровки взяты из наименований пакета записи (расшифровки_аббревиатур, наименование связанной записи); других утверждений в текстах не добавлено, ревью а/б/в по этим записям повторено: замечаний нет"
+  - "2026-10-28, задача #44 (проверка Gemini 3.8): FAR и FRR — убраны фразы «не путать с FMR / FNMR» (FMR и FNMR нет в пакете). Новый блок ж (записи реестра, названные в тексте, есть в пакете: связанные термины, формулировки источников и связанных записей, «Примечания» и «Примеры», расшифровки аббревиатур): до правок 71 замечание в 56 записях (метрики 15% → 100%, термины 54% → 100% после правок). Убраны ссылки на записи вне пакета (APAR, APNRR, FNIR, FPIR, FTA, FTE, IAPIR, IAPMR, CAPNMR, CAPNIR), перефразированы упоминания (FMR, FNMR, FAR, FRR, BPNRR, acquire, biometric-capture-subject, biometric-enrolment, biometric-enrolment-database, capture-task, multi-modal), у FTE добавлена опора на примечание 2 п. 37.09.07 (длина 261 → 300+). Новых утверждений нет; ревью а/б/в по 21 изменённой записи повторено: замечаний нет"
 records:
-  apar: {hash: 02f792fbda9f, a: [], b: [], c: []}
+  apar: {hash: 71091240b2b1, a: [], b: [], c: []}
   apcer: {hash: 8aa060eefae3, a: [], b: [], c: []}
-  apnrr: {hash: de64d5ff5223, a: [], b: [], c: []}
+  apnrr: {hash: 07de615c99a0, a: [], b: [], c: []}
   bpcer: {hash: a82b8639860b, a: [], b: [], c: []}
-  bpnrr: {hash: b3a94ac7f782, a: [], b: [], c: []}
-  capnir: {hash: 7be4d31149b8, a: [], b: [], c: []}
-  capnmr: {hash: dac0fcb823be, a: [], b: [], c: []}
-  far: {hash: e082687648cd, a: [], b: [], c: []}
-  fmr: {hash: adfee8e94f46, a: [], b: [], c: []}
-  fnir: {hash: 98f530d925bd, a: [], b: [], c: []}
-  fnmr: {hash: 849dd73bc8e8, a: [], b: [], c: []}
-  fpir: {hash: 4272805df9ce, a: [], b: [], c: []}
-  frr: {hash: a87c4f198801, a: [], b: [], c: []}
-  fta: {hash: 9ef43a9eec0f, a: [], b: [], c: []}
-  fte: {hash: dfefcad20b34, a: [], b: [], c: []}
+  bpnrr: {hash: bd18703b14b3, a: [], b: [], c: []}
+  capnir: {hash: 6cc9f3828440, a: [], b: [], c: []}
+  capnmr: {hash: 8bbec32c3b7f, a: [], b: [], c: []}
+  far: {hash: a56039a82089, a: [], b: [], c: []}
+  fmr: {hash: cef9724d8f50, a: [], b: [], c: []}
+  fnir: {hash: d2e709ac6db3, a: [], b: [], c: []}
+  fnmr: {hash: a7571c00a561, a: [], b: [], c: []}
+  fpir: {hash: 337698092d1c, a: [], b: [], c: []}
+  frr: {hash: 1097c9ca3445, a: [], b: [], c: []}
+  fta: {hash: 49bab55dfd74, a: [], b: [], c: []}
+  fte: {hash: 071fa9d6bc4b, a: [], b: [], c: []}
   iapar: {hash: edc96f608fae, a: [], b: [], c: []}
-  iapir: {hash: 6009fe0868f5, a: [], b: [], c: []}
-  iapmr: {hash: 7d634f423f6e, a: [], b: [], c: []}
+  iapir: {hash: fd3a9099cb9d, a: [], b: [], c: []}
+  iapmr: {hash: 8fd13b0f1c23, a: [], b: [], c: []}
   tpir: {hash: 763ee483df9a, a: [], b: [], c: []}
   dcs-pd: {hash: f3af2fa9890f, a: [], b: [], c: []}
   det: {hash: dc5dbda2866b, a: [], b: [], c: []}
@@ -43,7 +44,7 @@ records:
   sel: {hash: 25fb8cd6922d, a: [], b: [], c: []}
   toe: {hash: db2d2c9a208e, a: [], b: [], c: []}
   acceptable-biometric-capture-attempt: {hash: 5f5efdee7822, a: [], b: [], c: []}
-  acquire: {hash: eacfda23eef5, a: [], b: [], c: []}
+  acquire: {hash: 097c1a6feb38, a: [], b: [], c: []}
   anonymized-biometric-data-record: {hash: 5766273250c0, a: [], b: [], c: []}
   artefact: {hash: 9e258a5385ff, a: [], b: [], c: []}
   attack-potential: {hash: 8e81a087c63c, a: [], b: [], c: []}
@@ -59,7 +60,7 @@ records:
   biometric-candidate: {hash: dd8ec3a3f78b, a: [], b: [], c: []}
   biometric-capture-device: {hash: 615f2d77c4d6, a: [], b: [], c: []}
   biometric-capture-process: {hash: ae286a6409d6, a: [], b: [], c: []}
-  biometric-capture-subject: {hash: e64a1ef97740, a: [], b: [], c: []}
+  biometric-capture-subject: {hash: 8f923a512990, a: [], b: [], c: []}
   biometric-capture-subsystem: {hash: 51aacb85fc2f, a: [], b: [], c: []}
   biometric-capture: {hash: 346857322c9c, a: [], b: [], c: []}
   biometric-characteristic: {hash: 4e9a2646af9d, a: [], b: [], c: []}
@@ -71,8 +72,8 @@ records:
   biometric-database: {hash: f34fc694f65c, a: [], b: [], c: []}
   biometric-enrollee: {hash: c0b39b2e1c0f, a: [], b: [], c: []}
   biometric-enrolment-data-record: {hash: a15ffdeca7bf, a: [], b: [], c: []}
-  biometric-enrolment-database: {hash: d8653725b5de, a: [], b: [], c: []}
-  biometric-enrolment: {hash: c648062fb2a6, a: [], b: [], c: []}
+  biometric-enrolment-database: {hash: 7501f3f8d95f, a: [], b: [], c: []}
+  biometric-enrolment: {hash: 5923e9a67c1a, a: [], b: [], c: []}
   biometric-false-acceptance: {hash: a2d326a77146, a: [], b: [], c: []}
   biometric-false-rejection: {hash: 35b43b21e657, a: [], b: [], c: []}
   biometric-feature-extraction: {hash: 61f98c8c3bae, a: [], b: [], c: []}
@@ -106,7 +107,7 @@ records:
   biometric: {hash: c7c6b099f166, a: [], b: [], c: []}
   bona-fide-presentation: {hash: 3556b3721594, a: [], b: [], c: []}
   capture-attempt: {hash: 0f67370d1128, a: [], b: [], c: []}
-  capture-task: {hash: 8ed14a048b0c, a: [], b: [], c: []}
+  capture-task: {hash: e0f49cedb516, a: [], b: [], c: []}
   capture-transaction: {hash: 745f68644e78, a: [], b: [], c: []}
   captured-biometric-sample: {hash: 8c2050bc5234, a: [], b: [], c: []}
   channel-effect: {hash: 95db7c0e4fd9, a: [], b: [], c: []}
@@ -149,7 +150,7 @@ records:
   match: {hash: 78193b0c57c6, a: [], b: [], c: []}
   mated: {hash: 370a2ef99855, a: [], b: [], c: []}
   mode: {hash: 27795eef970b, a: [], b: [], c: []}
-  multi-modal: {hash: 105579182e65, a: [], b: [], c: []}
+  multi-modal: {hash: 62c075ee2cae, a: [], b: [], c: []}
   negative-biometric-claim: {hash: 04d17e08237d, a: [], b: [], c: []}
   non-conformant-capture-attempt: {hash: 487ae2547b34, a: [], b: [], c: []}
   non-match: {hash: a3fcf22c050a, a: [], b: [], c: []}

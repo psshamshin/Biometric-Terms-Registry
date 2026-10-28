@@ -129,4 +129,4 @@ def test_real_registry_has_no_findings_except_links():
     records = v.validate(rows, SCHEMA, v.load_review())
     assert records
     for r in records:
-        assert not any(r["findings"][k] for k in "fabcd"), (r["id"], r["findings"])
+        assert not any(r["findings"][k] for k in "fabcdgh"), (r["id"], r["findings"])

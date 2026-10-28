@@ -72,10 +72,12 @@ def related_labels(row, empty):
     return {item.split(" — ")[0] for item in row["Связанные термины"].split(". ")}
 
 
-def inside_name(inner, outer):
-    """Наименование записи inner входит словами в наименование записи outer («Подлинное биометрическое предъявление»
-    в «Вероятность отсутствия ответа на подлинное биометрическое предъявление»): отдельным упоминанием не считается."""
-    return _find(_tokens(outer["Наименование ru"]), _tokens(inner["Наименование ru"])) is not None
+def inside_name(inner, outer, empty):
+    """Наименование или синоним записи inner входит словами в наименование записи outer («Подлинное биометрическое
+    предъявление» в «Вероятность отсутствия ответа на подлинное биометрическое предъявление»): отдельным упоминанием не считается."""
+    names = [inner["Наименование ru"]] + ([] if inner["Синонимы"] == empty else inner["Синонимы"].split(", "))
+    outer_tokens = _tokens(outer["Наименование ru"])
+    return any(_tokens(n) and _find(outer_tokens, _tokens(n)) is not None for n in names)
 
 
 def notes_of(row, std_rows):
@@ -153,14 +155,19 @@ def check_row(row, rows, schema, aliases=None, notes_text=""):
 
     # ж) запись реестра, названная в тексте (наименованием, синонимом или аббревиатурой), но отсутствующая в пакете записи.
     # Пакет (src/context.py): «Связанные термины», расшифровки аббревиатур из формулировок источников и «Примечаний»/«Примеров»
-    # статьи (notes_text), записи, названные в формулировках источников и в «Примечаниях»/«Примерах»
-    in_package = set(mentions(src + "\n" + notes_text, rows, row["id"], empty, aliases))
-    in_package |= {o["id"] for o in rows if label(o, empty) in labels}
-    in_package |= {r["id"] for r, _ in abbreviation_hits(src + "\n" + notes_text, rows, row["id"], empty, aliases)}
-    named = mentions(long + "\n" + short, rows, row["id"], empty, aliases)
+    # статьи (notes_text), записи, названные в тексте пакета: формулировки источников записи и связанных записей, «Примечания»/«Примеры»
+    related = [o for o in rows if label(o, empty) in labels]
+    package_text = "\n".join([src, notes_text] + [source_text(o, schema) for o in related])
+    package_text = re.sub(r"(?<=[а-яё])\([а-яё]{1,3}\)", "", package_text)  # «идентификатора(ов)» → «идентификатора»
+    in_package = {o["id"] for o in related}
+    for part in re.split(r"(?<=[.;])\s+|\n", package_text):  # по предложениям: перекрытия названий в длинном тексте не гасят друг друга
+        in_package |= set(mentions(part, rows, row["id"], empty, aliases))
+    in_package |= {r["id"] for r, _ in abbreviation_hits(package_text, rows, row["id"], empty, aliases)}
+    named = list(dict.fromkeys(rid for text in (long, short) for rid in mentions(text, rows, row["id"], empty, aliases)))
     by_id = {r["id"]: r for r in rows}
     outside = [rid for rid in named if rid not in in_package
-               and not any(inside_name(by_id[rid], by_id[pid]) for pid in named if pid in in_package)]  # часть названия записи пакета
+               and not any(inside_name(by_id[rid], by_id[pid], empty) for pid in named if pid in in_package)  # часть названия записи пакета
+               and not inside_name(by_id[rid], row, empty)]  # или названия самой записи
     for rid in outside:
         other = next(r for r in rows if r["id"] == rid)
         res["h"].append(f"в тексте названа запись «{label(other, empty)}», которой нет в пакете записи (источники и связанные термины)")
