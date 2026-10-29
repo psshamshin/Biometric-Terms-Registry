@@ -1,4 +1,4 @@
-"""docs/RULES.md и CLAUDE.md не расходятся с кодом: команды существуют и разрешены агенту, флаги и ключи — настоящие."""
+"""docs/RULES.md и AGENTS.md не расходятся с кодом: команды существуют и разрешены агенту, флаги и ключи — настоящие."""
 import re
 from pathlib import Path
 
@@ -8,9 +8,9 @@ from src.checks import load_schema
 
 ROOT = Path(__file__).resolve().parent.parent
 RULES = (ROOT / "docs/RULES.md").read_text(encoding="utf-8")
-CLAUDE = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+AGENTS = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
 WORKFLOW = (ROOT / ".github/workflows/claude.yml").read_text(encoding="utf-8")
-MODULES = sorted(set(re.findall(r"python -m src\.(\w+)", RULES + CLAUDE)))
+MODULES = sorted(set(re.findall(r"python -m src\.(\w+)", RULES + AGENTS)))
 
 
 @pytest.mark.parametrize("module", MODULES)
