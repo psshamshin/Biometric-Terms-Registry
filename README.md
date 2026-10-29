@@ -102,6 +102,24 @@ flowchart LR
 | Утвердить метрику | Добавить строку `Статус: утвержден` в `data/curated/<id>.yaml` (**Edit this file → Propose changes**) и принять pull request |
 | Получить реестр | `data/out/registry.csv` → **Download raw file**; повторная публикация таблицы — **Actions → CI → Run workflow** |
 
+## Смена агента
+
+Репозиторий не привязан к агенту: правила лежат в `AGENTS.md` и `docs/RULES.md`, а `CLAUDE.md` — одна строка-ссылка на `AGENTS.md`.
+
+**Что меняется:**
+
+| Что | Где | Что сделать |
+|---|---|---|
+| Workflow агента | `.github/workflows/claude.yml` | заменить шаг запуска агента, имя файла и условие `if` (триггер `@claude`); права задания (`permissions`) и установку Python оставить |
+| Файл инструкций | `AGENTS.md`, `CLAUDE.md` | если новый агент читает `AGENTS.md` — `CLAUDE.md` удалить; иначе заменить его ссылкой на файл, который читает новый агент |
+| Секрет | **Settings → Secrets and variables → Actions**: `CLAUDE_CODE_OAUTH_TOKEN` | создать секрет нового агента, имя указать в workflow; старый удалить |
+| Триггер в шаблонах задач | `.github/ISSUE_TEMPLATE/*.md`, строка таблицы «Ответить агенту» выше | заменить `@claude` на упоминание нового агента, в том же виде, что в условии `if` workflow |
+| Разрешённые команды | `--allowedTools` в workflow | записать в синтаксисе нового агента тот же список, что в `docs/RULES.md`, раздел 1; в `tests/test_docs.py` переписать только функцию `read_allowed_commands` |
+
+**Что не меняется:** парсер и вся логика (`src/`, `run.py`), `config/`, `prompts/`, `docs/RULES.md` и `docs/DECISIONS.md`, `data/` (включая `data/curated/` и `data/out/_baseline/`), `tests/` (кроме `read_allowed_commands`), `.github/workflows/ci.yml`, `requirements.txt`.
+
+После замены: `python -m pytest -q` (тест разрешений сверяет конфиг агента с `docs/RULES.md`) и пробная задача по шаблону «Проверить всё».
+
 ## Для разработчиков
 
 ```bash
